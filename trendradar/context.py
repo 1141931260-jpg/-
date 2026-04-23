@@ -304,6 +304,7 @@ class AppContext:
             matches_word_groups_func=self.matches_word_groups,
             load_frequency_words_func=lambda: self.load_frequency_words(frequency_file),
             show_new_section=self.show_new_section,
+            max_total_news=self.config.get("MAX_TOTAL_NEWS", 0),
         )
 
     def generate_html(

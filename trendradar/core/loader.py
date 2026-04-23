@@ -83,6 +83,7 @@ def _load_report_config(config_data: Dict) -> Dict:
     # 环境变量覆盖
     sort_by_position_env = _get_env_bool("SORT_BY_POSITION_FIRST")
     max_news_env = _get_env_int("MAX_NEWS_PER_KEYWORD")
+    max_total_news_env = _get_env_int("MAX_TOTAL_NEWS")
 
     return {
         "REPORT_MODE": report_config.get("mode", "daily"),
@@ -90,6 +91,7 @@ def _load_report_config(config_data: Dict) -> Dict:
         "RANK_THRESHOLD": report_config.get("rank_threshold", 10),
         "SORT_BY_POSITION_FIRST": sort_by_position_env if sort_by_position_env is not None else report_config.get("sort_by_position_first", False),
         "MAX_NEWS_PER_KEYWORD": max_news_env or report_config.get("max_news_per_keyword", 0),
+        "MAX_TOTAL_NEWS": max_total_news_env or report_config.get("max_total_news", 0),
     }
 
 

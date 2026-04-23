@@ -21,6 +21,7 @@ def prepare_report_data(
     matches_word_groups_func: Optional[Callable] = None,
     load_frequency_words_func: Optional[Callable] = None,
     show_new_section: bool = True,
+    max_total_news: int = 0,
 ) -> Dict:
     """
     准备报告数据
@@ -35,6 +36,7 @@ def prepare_report_data(
         matches_word_groups_func: 词组匹配函数
         load_frequency_words_func: 加载频率词函数
         show_new_section: 是否显示新增热点区域
+        max_total_news: 热榜区域总条数上限（0=不限制）
 
     Returns:
         Dict: 准备好的报告数据
@@ -101,12 +103,18 @@ def prepare_report_data(
                     )
 
     processed_stats = []
+    remaining_total = max_total_news if max_total_news > 0 else None
     for stat in stats:
         if stat["count"] <= 0:
             continue
 
+        if remaining_total is not None and remaining_total <= 0:
+            break
+
         processed_titles = []
         for title_data in stat["titles"]:
+            if remaining_total is not None and remaining_total <= 0:
+                break
             processed_title = {
                 "title": title_data["title"],
                 "source_name": title_data["source_name"],
@@ -119,11 +127,16 @@ def prepare_report_data(
                 "is_new": title_data.get("is_new", False),
             }
             processed_titles.append(processed_title)
+            if remaining_total is not None:
+                remaining_total -= 1
+
+        if not processed_titles:
+            continue
 
         processed_stats.append(
             {
                 "word": stat["word"],
-                "count": stat["count"],
+                "count": len(processed_titles),
                 "percentage": stat.get("percentage", 0),
                 "titles": processed_titles,
             }
