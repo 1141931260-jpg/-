@@ -17,17 +17,8 @@ def strip_markdown(text: str) -> str:
     Returns:
         纯文本内容
     """
-    # 转换链接 [text](url) -> text url（保留 URL）
-    text = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'\1 \2', text)
-
-    # 先保护 URL，避免后续 markdown 清洗误伤链接中的下划线等字符
-    protected_urls: list[str] = []
-
-    def _protect_url(match: re.Match) -> str:
-        protected_urls.append(match.group(0))
-        return f"@@URLTOKEN{len(protected_urls) - 1}@@"
-
-    text = re.sub(r'https?://[^\s<>\]]+', _protect_url, text)
+    # 转换链接 [text](url) -> text（仅保留链接文本，不保留 URL）
+    text = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'\1', text)
 
     # 去除粗体 **text** 或 __text__
     text = re.sub(r'\*\*(.+?)\*\*', r'\1', text)
@@ -62,9 +53,9 @@ def strip_markdown(text: str) -> str:
     # 清理多余的空行（保留最多两个连续空行）
     text = re.sub(r'\n{3,}', '\n\n', text)
 
-    # 还原之前保护的 URL
-    for idx, url in enumerate(protected_urls):
-        text = text.replace(f"@@URLTOKEN{idx}@@", url)
+    # 去除裸露 URL，避免 text 模式推送出现明文链接
+    text = re.sub(r'https?://[^\s<>\]]+', '', text)
+    text = re.sub(r'\s{2,}', ' ', text)
 
     return text.strip()
 
