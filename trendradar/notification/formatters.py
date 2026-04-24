@@ -55,7 +55,8 @@ def strip_markdown(text: str) -> str:
 
     # 去除裸露 URL，避免 text 模式推送出现明文链接
     text = re.sub(r'https?://[^\s<>\]]+', '', text)
-    text = re.sub(r'\s{2,}', ' ', text)
+    # 仅压缩行内连续空白，保留换行分段
+    text = re.sub(r'[^\S\r\n]{2,}', ' ', text)
 
     return text.strip()
 
