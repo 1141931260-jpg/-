@@ -48,17 +48,15 @@ def format_title_for_platform(
         title_data["ranks"], title_data["rank_threshold"], platform
     )
 
-    link_url = title_data["mobile_url"] or title_data["url"]
+    # Notification text mode: do not include URLs in title lines.
+    link_url = ""
     cleaned_title = clean_title(title_data["title"])
 
     # 获取关键词标签（platform 模式使用）
     keyword = title_data.get("matched_keyword", "") if show_keyword else ""
 
     if platform == "feishu":
-        if link_url:
-            formatted_title = f"[{cleaned_title}]({link_url})"
-        else:
-            formatted_title = cleaned_title
+        formatted_title = cleaned_title
 
         title_prefix = "🆕 " if title_data.get("is_new") else ""
 
@@ -79,10 +77,7 @@ def format_title_for_platform(
         return result
 
     elif platform == "dingtalk":
-        if link_url:
-            formatted_title = f"[{cleaned_title}]({link_url})"
-        else:
-            formatted_title = cleaned_title
+        formatted_title = cleaned_title
 
         title_prefix = "🆕 " if title_data.get("is_new") else ""
 
@@ -104,10 +99,7 @@ def format_title_for_platform(
 
     elif platform in ("wework", "bark"):
         # WeWork 和 Bark 使用 markdown 格式
-        if link_url:
-            formatted_title = f"[{cleaned_title}]({link_url})"
-        else:
-            formatted_title = cleaned_title
+        formatted_title = cleaned_title
 
         title_prefix = "🆕 " if title_data.get("is_new") else ""
 
@@ -128,10 +120,7 @@ def format_title_for_platform(
         return result
 
     elif platform == "telegram":
-        if link_url:
-            formatted_title = f'<a href="{link_url}">{html_escape(cleaned_title)}</a>'
-        else:
-            formatted_title = cleaned_title
+        formatted_title = cleaned_title
 
         title_prefix = "🆕 " if title_data.get("is_new") else ""
 
@@ -152,10 +141,7 @@ def format_title_for_platform(
         return result
 
     elif platform == "ntfy":
-        if link_url:
-            formatted_title = f"[{cleaned_title}]({link_url})"
-        else:
-            formatted_title = cleaned_title
+        formatted_title = cleaned_title
 
         title_prefix = "🆕 " if title_data.get("is_new") else ""
 
@@ -177,11 +163,7 @@ def format_title_for_platform(
 
     elif platform == "slack":
         # Slack 使用 mrkdwn 格式
-        if link_url:
-            # Slack 链接格式: <url|text>
-            formatted_title = f"<{link_url}|{cleaned_title}>"
-        else:
-            formatted_title = cleaned_title
+        formatted_title = cleaned_title
 
         title_prefix = "🆕 " if title_data.get("is_new") else ""
 

@@ -1407,7 +1407,7 @@ def _format_rss_item_line(
         格式化后的条目行字符串
     """
     title = item.get("title", "")
-    url = item.get("url", "")
+    url = ""
     published_at = item.get("published_at", "")
 
     # 使用友好时间格式
@@ -1418,24 +1418,15 @@ def _format_rss_item_line(
 
     # 构建条目行
     if format_type == "feishu":
-        if url:
-            item_line = f"  {index}. [{title}]({url})"
-        else:
-            item_line = f"  {index}. {title}"
+        item_line = f"  {index}. {title}"
         if friendly_time:
             item_line += f" <font color='grey'>- {friendly_time}</font>"
     elif format_type == "telegram":
-        if url:
-            item_line = f"  {index}. {title} ({url})"
-        else:
-            item_line = f"  {index}. {title}"
+        item_line = f"  {index}. {title}"
         if friendly_time:
             item_line += f" - {friendly_time}"
     else:
-        if url:
-            item_line = f"  {index}. [{title}]({url})"
-        else:
-            item_line = f"  {index}. {title}"
+        item_line = f"  {index}. {title}"
         if friendly_time:
             item_line += f" `{friendly_time}`"
 
@@ -1683,7 +1674,7 @@ def _format_standalone_platform_item(item: Dict, index: int, format_type: str, r
         格式化后的条目行字符串
     """
     title = item.get("title", "")
-    url = item.get("url", "") or item.get("mobileUrl", "")
+    url = ""
     ranks = item.get("ranks", [])
     rank = item.get("rank", 0)
     first_time = item.get("first_time", "")
@@ -1711,10 +1702,7 @@ def _format_standalone_platform_item(item: Dict, index: int, format_type: str, r
 
     # 根据格式类型构建条目行（复用热点词汇统计区样式）
     if format_type == "feishu":
-        if url:
-            item_line = f"  {index}. [{title}]({url})"
-        else:
-            item_line = f"  {index}. {title}"
+        item_line = f"  {index}. {title}"
         if rank_display:
             item_line += f" {rank_display}"
         if time_display:
@@ -1723,10 +1711,7 @@ def _format_standalone_platform_item(item: Dict, index: int, format_type: str, r
             item_line += f" <font color='green'>{count_display}</font>"
 
     elif format_type == "dingtalk":
-        if url:
-            item_line = f"  {index}. [{title}]({url})"
-        else:
-            item_line = f"  {index}. {title}"
+        item_line = f"  {index}. {title}"
         if rank_display:
             item_line += f" {rank_display}"
         if time_display:
@@ -1735,10 +1720,7 @@ def _format_standalone_platform_item(item: Dict, index: int, format_type: str, r
             item_line += f" {count_display}"
 
     elif format_type == "telegram":
-        if url:
-            item_line = f"  {index}. {title} ({url})"
-        else:
-            item_line = f"  {index}. {title}"
+        item_line = f"  {index}. {title}"
         if rank_display:
             item_line += f" {rank_display}"
         if time_display:
@@ -1747,10 +1729,7 @@ def _format_standalone_platform_item(item: Dict, index: int, format_type: str, r
             item_line += f" {count_display}"
 
     elif format_type == "slack":
-        if url:
-            item_line = f"  {index}. <{url}|{title}>"
-        else:
-            item_line = f"  {index}. {title}"
+        item_line = f"  {index}. {title}"
         if rank_display:
             item_line += f" {rank_display}"
         if time_display:
@@ -1760,10 +1739,7 @@ def _format_standalone_platform_item(item: Dict, index: int, format_type: str, r
 
     else:
         # wework, bark, ntfy
-        if url:
-            item_line = f"  {index}. [{title}]({url})"
-        else:
-            item_line = f"  {index}. {title}"
+        item_line = f"  {index}. {title}"
         if rank_display:
             item_line += f" {rank_display}"
         if time_display:
@@ -1790,7 +1766,7 @@ def _format_standalone_rss_item(
         格式化后的条目行字符串
     """
     title = item.get("title", "")
-    url = item.get("url", "")
+    url = ""
     published_at = item.get("published_at", "")
     author = item.get("author", "")
 
@@ -1809,32 +1785,20 @@ def _format_standalone_rss_item(
 
     # 根据格式类型构建条目行
     if format_type == "feishu":
-        if url:
-            item_line = f"  {index}. [{title}]({url})"
-        else:
-            item_line = f"  {index}. {title}"
+        item_line = f"  {index}. {title}"
         if meta_str:
             item_line += f" <font color='grey'>- {meta_str}</font>"
     elif format_type == "telegram":
-        if url:
-            item_line = f"  {index}. {title} ({url})"
-        else:
-            item_line = f"  {index}. {title}"
+        item_line = f"  {index}. {title}"
         if meta_str:
             item_line += f" - {meta_str}"
     elif format_type == "slack":
-        if url:
-            item_line = f"  {index}. <{url}|{title}>"
-        else:
-            item_line = f"  {index}. {title}"
+        item_line = f"  {index}. {title}"
         if meta_str:
             item_line += f" _{meta_str}_"
     else:
         # wework, bark, ntfy, dingtalk
-        if url:
-            item_line = f"  {index}. [{title}]({url})"
-        else:
-            item_line = f"  {index}. {title}"
+        item_line = f"  {index}. {title}"
         if meta_str:
             item_line += f" `{meta_str}`"
 
