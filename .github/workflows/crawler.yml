@@ -133,6 +133,42 @@ jobs:
             exit 1
           fi
 
+      - name: Validate notification channels
+        if: success()
+        env:
+          FEISHU_WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK_URL }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          DINGTALK_WEBHOOK_URL: ${{ secrets.DINGTALK_WEBHOOK_URL }}
+          WEWORK_WEBHOOK_URL: ${{ secrets.WEWORK_WEBHOOK_URL }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          BARK_URL: ${{ secrets.BARK_URL }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          GENERIC_WEBHOOK_URL: ${{ secrets.GENERIC_WEBHOOK_URL }}
+        run: |
+          channels=()
+
+          [ -n "$FEISHU_WEBHOOK_URL" ] && channels+=("feishu")
+          [ -n "$DINGTALK_WEBHOOK_URL" ] && channels+=("dingtalk")
+          [ -n "$WEWORK_WEBHOOK_URL" ] && channels+=("wework")
+          [ -n "$BARK_URL" ] && channels+=("bark")
+          [ -n "$SLACK_WEBHOOK_URL" ] && channels+=("slack")
+          [ -n "$GENERIC_WEBHOOK_URL" ] && channels+=("generic_webhook")
+          [ -n "$NTFY_TOPIC" ] && channels+=("ntfy")
+          [ -n "$EMAIL_FROM" ] && [ -n "$EMAIL_PASSWORD" ] && [ -n "$EMAIL_TO" ] && channels+=("email")
+          [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ] && channels+=("telegram")
+
+          if [ ${#channels[@]} -eq 0 ]; then
+            echo "::error::No notification channel configured in GitHub Secrets."
+            echo "Set at least one channel secret (e.g. BARK_URL / NTFY_TOPIC / TELEGRAM_BOT_TOKEN+TELEGRAM_CHAT_ID)."
+            exit 1
+          fi
+
+          echo "Detected notification channels: ${channels[*]}"
+
       - name: Run crawler
         if: success()
         env:
