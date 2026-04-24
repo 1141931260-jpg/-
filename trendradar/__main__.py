@@ -682,6 +682,15 @@ class NewsAnalyzer:
             "platforms": [],
             "rss_feeds": [],
         }
+        seen_standalone_titles = set()
+
+        def _normalize_standalone_title(title: str) -> str:
+            if not title:
+                return ""
+            normalized = title.lower().strip()
+            normalized = re.sub(r"[\s\u3000]+", "", normalized)
+            normalized = re.sub(r"[^\w\u4e00-\u9fff]", "", normalized)
+            return normalized
 
         # 找出最新批次时间（类似 current 模式的过滤逻辑）
         latest_time = None
@@ -738,6 +747,11 @@ class NewsAnalyzer:
                     "count": meta.get("count", 1),
                     "rank_timeline": meta.get("rank_timeline", []),
                 }
+                normalized_title = _normalize_standalone_title(title)
+                if normalized_title and normalized_title in seen_standalone_titles:
+                    continue
+                if normalized_title:
+                    seen_standalone_titles.add(normalized_title)
                 items.append(item)
 
             # 按当前排名排序
