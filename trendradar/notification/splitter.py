@@ -209,12 +209,23 @@ def split_content_into_batches(
 
     now = get_time_func() if get_time_func else datetime.now()
 
+    # 仅独立展示区 + AI 分析模式：
+    # 当热榜/RSS/新增等统计区都为空时，隐藏头尾统计信息，只保留正文区域。
+    standalone_ai_only_mode = bool(
+        (standalone_data or ai_content)
+        and not report_data["stats"]
+        and not report_data["new_titles"]
+        and not report_data["failed_ids"]
+        and not rss_items
+        and not rss_new_items
+    )
+
     # 构建头部信息
     base_header = ""
     
     # 准备 AI 分析统计行（如果存在）
     ai_stats_line = ""
-    if ai_stats and ai_stats.get("analyzed_news", 0) > 0:
+    if not standalone_ai_only_mode and ai_stats and ai_stats.get("analyzed_news", 0) > 0:
         analyzed_news = ai_stats.get("analyzed_news", 0)
         total_news = ai_stats.get("total_news", 0)
         ai_mode = ai_stats.get("ai_mode", "")
@@ -244,64 +255,66 @@ def split_content_into_batches(
             ai_stats_line = f"AI 分析数： {news_display}{mode_suffix}\n"
 
     # 构建统一的头部（总是显示总新闻数、时间和类型）
-    if format_type in ("wework", "bark"):
-        base_header = f"**总新闻数：** {total_titles}\n"
-        base_header += ai_stats_line
-        base_header += f"**时间：** {now.strftime('%Y-%m-%d %H:%M:%S')}\n"
-        base_header += f"**类型：** {report_type}\n\n"
-    elif format_type == "telegram":
-        base_header = f"总新闻数： {total_titles}\n"
-        base_header += ai_stats_line
-        base_header += f"时间： {now.strftime('%Y-%m-%d %H:%M:%S')}\n"
-        base_header += f"类型： {report_type}\n\n"
-    elif format_type == "ntfy":
-        base_header = f"**总新闻数：** {total_titles}\n"
-        base_header += ai_stats_line
-        base_header += f"**时间：** {now.strftime('%Y-%m-%d %H:%M:%S')}\n"
-        base_header += f"**类型：** {report_type}\n\n"
-    elif format_type == "feishu":
-        base_header = f"**总新闻数：** {total_titles}\n"
-        base_header += ai_stats_line
-        base_header += f"**时间：** {now.strftime('%Y-%m-%d %H:%M:%S')}\n"
-        base_header += f"**类型：** {report_type}\n\n"
-        base_header += "---\n\n"
-    elif format_type == "dingtalk":
-        base_header = f"**总新闻数：** {total_titles}\n"
-        base_header += ai_stats_line
-        base_header += f"**时间：** {now.strftime('%Y-%m-%d %H:%M:%S')}\n"
-        base_header += f"**类型：** {report_type}\n\n"
-        base_header += "---\n\n"
-    elif format_type == "slack":
-        base_header = f"*总新闻数：* {total_titles}\n"
-        base_header += ai_stats_line
-        base_header += f"*时间：* {now.strftime('%Y-%m-%d %H:%M:%S')}\n"
-        base_header += f"*类型：* {report_type}\n\n"
+    if not standalone_ai_only_mode:
+        if format_type in ("wework", "bark"):
+            base_header = f"**总新闻数：** {total_titles}\n"
+            base_header += ai_stats_line
+            base_header += f"**时间：** {now.strftime('%Y-%m-%d %H:%M:%S')}\n"
+            base_header += f"**类型：** {report_type}\n\n"
+        elif format_type == "telegram":
+            base_header = f"总新闻数： {total_titles}\n"
+            base_header += ai_stats_line
+            base_header += f"时间： {now.strftime('%Y-%m-%d %H:%M:%S')}\n"
+            base_header += f"类型： {report_type}\n\n"
+        elif format_type == "ntfy":
+            base_header = f"**总新闻数：** {total_titles}\n"
+            base_header += ai_stats_line
+            base_header += f"**时间：** {now.strftime('%Y-%m-%d %H:%M:%S')}\n"
+            base_header += f"**类型：** {report_type}\n\n"
+        elif format_type == "feishu":
+            base_header = f"**总新闻数：** {total_titles}\n"
+            base_header += ai_stats_line
+            base_header += f"**时间：** {now.strftime('%Y-%m-%d %H:%M:%S')}\n"
+            base_header += f"**类型：** {report_type}\n\n"
+            base_header += "---\n\n"
+        elif format_type == "dingtalk":
+            base_header = f"**总新闻数：** {total_titles}\n"
+            base_header += ai_stats_line
+            base_header += f"**时间：** {now.strftime('%Y-%m-%d %H:%M:%S')}\n"
+            base_header += f"**类型：** {report_type}\n\n"
+            base_header += "---\n\n"
+        elif format_type == "slack":
+            base_header = f"*总新闻数：* {total_titles}\n"
+            base_header += ai_stats_line
+            base_header += f"*时间：* {now.strftime('%Y-%m-%d %H:%M:%S')}\n"
+            base_header += f"*类型：* {report_type}\n\n"
 
     base_footer = ""
-    if format_type in ("wework", "bark"):
-        base_footer = f"\n\n\n> 更新时间：{now.strftime('%Y-%m-%d %H:%M:%S')}"
-        if update_info:
-            base_footer += f"\n> TrendRadar 发现新版本 **{update_info['remote_version']}**，当前 **{update_info['current_version']}**"
-    elif format_type == "telegram":
-        base_footer = f"\n\n更新时间：{now.strftime('%Y-%m-%d %H:%M:%S')}"
-        if update_info:
-            base_footer += f"\nTrendRadar 发现新版本 {update_info['remote_version']}，当前 {update_info['current_version']}"
-    elif format_type == "ntfy":
-        base_footer = f"\n\n> 更新时间：{now.strftime('%Y-%m-%d %H:%M:%S')}"
-        if update_info:
-            base_footer += f"\n> TrendRadar 发现新版本 **{update_info['remote_version']}**，当前 **{update_info['current_version']}**"
-    elif format_type == "feishu":
-        base_footer = f"\n\n<font color='grey'>更新时间：{now.strftime('%Y-%m-%d %H:%M:%S')}</font>"
-        if update_info:
-            base_footer += f"\n<font color='grey'>TrendRadar 发现新版本 {update_info['remote_version']}，当前 {update_info['current_version']}</font>"
-    elif format_type == "dingtalk":
-        base_footer = f"\n\n> 更新时间：{now.strftime('%Y-%m-%d %H:%M:%S')}"
-        if update_info:
-            base_footer += f"\n> TrendRadar 发现新版本 **{update_info['remote_version']}**，当前 **{update_info['current_version']}**"
-    elif format_type == "slack":
-        base_footer = f"\n\n_更新时间：{now.strftime('%Y-%m-%d %H:%M:%S')}_"
-        if update_info:
-            base_footer += f"\n_TrendRadar 发现新版本 *{update_info['remote_version']}*，当前 *{update_info['current_version']}_"
+    if not standalone_ai_only_mode:
+        if format_type in ("wework", "bark"):
+            base_footer = f"\n\n\n> 更新时间：{now.strftime('%Y-%m-%d %H:%M:%S')}"
+            if update_info:
+                base_footer += f"\n> TrendRadar 发现新版本 **{update_info['remote_version']}**，当前 **{update_info['current_version']}**"
+        elif format_type == "telegram":
+            base_footer = f"\n\n更新时间：{now.strftime('%Y-%m-%d %H:%M:%S')}"
+            if update_info:
+                base_footer += f"\nTrendRadar 发现新版本 {update_info['remote_version']}，当前 {update_info['current_version']}"
+        elif format_type == "ntfy":
+            base_footer = f"\n\n> 更新时间：{now.strftime('%Y-%m-%d %H:%M:%S')}"
+            if update_info:
+                base_footer += f"\n> TrendRadar 发现新版本 **{update_info['remote_version']}**，当前 **{update_info['current_version']}**"
+        elif format_type == "feishu":
+            base_footer = f"\n\n<font color='grey'>更新时间：{now.strftime('%Y-%m-%d %H:%M:%S')}</font>"
+            if update_info:
+                base_footer += f"\n<font color='grey'>TrendRadar 发现新版本 {update_info['remote_version']}，当前 {update_info['current_version']}</font>"
+        elif format_type == "dingtalk":
+            base_footer = f"\n\n> 更新时间：{now.strftime('%Y-%m-%d %H:%M:%S')}"
+            if update_info:
+                base_footer += f"\n> TrendRadar 发现新版本 **{update_info['remote_version']}**，当前 **{update_info['current_version']}**"
+        elif format_type == "slack":
+            base_footer = f"\n\n_更新时间：{now.strftime('%Y-%m-%d %H:%M:%S')}_"
+            if update_info:
+                base_footer += f"\n_TrendRadar 发现新版本 *{update_info['remote_version']}*，当前 *{update_info['current_version']}_"
 
     # 根据 display_mode 选择统计标题
     stats_title = "热点词汇统计" if display_mode == "keyword" else "热点新闻统计"
