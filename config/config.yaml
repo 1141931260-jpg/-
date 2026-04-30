@@ -115,6 +115,11 @@ rss:
       name: "雅虎财经"
       url: "https://finance.yahoo.com/news/rssindex"
 
+    - id: "github-trending-daily"
+      name: "GitHub 每日好项目榜"
+      url: "https://mshibanami.github.io/GitHubTrendingRSS/daily/all.xml"
+      max_items: 10
+
     # 自定义源示例
     # - id: "custom-feed"
     #   name: "自定义源"
@@ -263,8 +268,8 @@ display:
   #   - AI 分析：由 ai_analysis.include_standalone 开关控制，将完整数据送入 AI 做深度分析
   # 两者共享此处的平台/RSS 配置，但开关互相独立（可只开 AI 分析、不推送展示）
   standalone:
-    platforms: ["toutiao", "wallstreetcn-hot", "bilibili-hot-search", "weibo", "douyin"]     # 热榜平台 ID 列表（如 ["zhihu", "weibo"]）
-    rss_feeds: []                     # RSS 源 ID 列表（如 ["hacker-news"]）
+    platforms: ["wallstreetcn-hot", "bilibili-hot-search", "weibo", "douyin"]     # 热榜平台 ID 列表（如 ["zhihu", "weibo"]）
+    rss_feeds: ["github-trending-daily"]                     # RSS 源 ID 列表（如 ["hacker-news"]）
     max_items: 10                     # 每个源最多展示条数（0=不限制）
 
 
@@ -510,7 +515,7 @@ ai_analysis:
 # 模型配置见上方 ai 配置段
 # ===============================================================
 ai_translation:
-  enabled: false                    # 是否启用翻译功能
+  enabled: true                     # 是否启用翻译功能
 
   # 翻译目标语言
   # 格式：自然语言描述

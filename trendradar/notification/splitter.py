@@ -5,6 +5,7 @@
 提供消息内容分批拆分功能，确保消息大小不超过各平台限制
 """
 
+import re
 from datetime import datetime
 from typing import Dict, List, Optional, Callable
 
@@ -1690,8 +1691,6 @@ def _format_standalone_platform_item(item: Dict, index: int, format_type: str, r
     url = ""
     ranks = item.get("ranks", [])
     rank = item.get("rank", 0)
-    first_time = item.get("first_time", "")
-    last_time = item.get("last_time", "")
     count = item.get("count", 1)
 
     # 使用 format_rank_display 格式化排名（复用热点词汇统计区逻辑）
@@ -1699,16 +1698,6 @@ def _format_standalone_platform_item(item: Dict, index: int, format_type: str, r
     if not ranks and rank > 0:
         ranks = [rank]
     rank_display = format_rank_display(ranks, rank_threshold, format_type) if ranks else ""
-
-    # 构建时间显示（用 ~ 连接范围，与热点词汇统计区一致）
-    # 将 HH-MM 格式转换为 HH:MM 格式
-    time_display = ""
-    if first_time and last_time and first_time != last_time:
-        first_time_display = convert_time_for_display(first_time)
-        last_time_display = convert_time_for_display(last_time)
-        time_display = f"{first_time_display}~{last_time_display}"
-    elif first_time:
-        time_display = convert_time_for_display(first_time)
 
     # 构建次数显示（格式为 (N次)，与热点词汇统计区一致）
     count_display = f"({count}次)" if count > 1 else ""
@@ -1718,8 +1707,6 @@ def _format_standalone_platform_item(item: Dict, index: int, format_type: str, r
         item_line = f"  {index}. {title}"
         if rank_display:
             item_line += f" {rank_display}"
-        if time_display:
-            item_line += f" <font color='grey'>- {time_display}</font>"
         if count_display:
             item_line += f" <font color='green'>{count_display}</font>"
 
@@ -1727,8 +1714,6 @@ def _format_standalone_platform_item(item: Dict, index: int, format_type: str, r
         item_line = f"  {index}. {title}"
         if rank_display:
             item_line += f" {rank_display}"
-        if time_display:
-            item_line += f" - {time_display}"
         if count_display:
             item_line += f" {count_display}"
 
@@ -1736,8 +1721,6 @@ def _format_standalone_platform_item(item: Dict, index: int, format_type: str, r
         item_line = f"  {index}. {title}"
         if rank_display:
             item_line += f" {rank_display}"
-        if time_display:
-            item_line += f" - {time_display}"
         if count_display:
             item_line += f" {count_display}"
 
@@ -1745,8 +1728,6 @@ def _format_standalone_platform_item(item: Dict, index: int, format_type: str, r
         item_line = f"  {index}. {title}"
         if rank_display:
             item_line += f" {rank_display}"
-        if time_display:
-            item_line += f" _{time_display}_"
         if count_display:
             item_line += f" {count_display}"
 
@@ -1755,8 +1736,6 @@ def _format_standalone_platform_item(item: Dict, index: int, format_type: str, r
         item_line = f"  {index}. {title}"
         if rank_display:
             item_line += f" {rank_display}"
-        if time_display:
-            item_line += f" - {time_display}"
         if count_display:
             item_line += f" {count_display}"
 
@@ -1780,6 +1759,11 @@ def _format_standalone_rss_item(
     """
     title = item.get("title", "")
     url = ""
+    summary = _clean_standalone_rss_summary(
+        str(item.get("summary", "")),
+        title=title,
+        max_length=120,
+    )
     published_at = item.get("published_at", "")
     author = item.get("author", "")
 
@@ -1801,19 +1785,61 @@ def _format_standalone_rss_item(
         item_line = f"  {index}. {title}"
         if meta_str:
             item_line += f" <font color='grey'>- {meta_str}</font>"
+        if summary:
+            item_line += f"\n     <font color='grey'>{summary}</font>"
     elif format_type == "telegram":
         item_line = f"  {index}. {title}"
         if meta_str:
             item_line += f" - {meta_str}"
+        if summary:
+            item_line += f"\n     {summary}"
     elif format_type == "slack":
         item_line = f"  {index}. {title}"
         if meta_str:
             item_line += f" _{meta_str}_"
+        if summary:
+            item_line += f"\n     {summary}"
     else:
         # wework, bark, ntfy, dingtalk
         item_line = f"  {index}. {title}"
         if meta_str:
             item_line += f" `{meta_str}`"
+        if summary:
+            item_line += f"\n     {summary}"
 
     item_line += "\n"
     return item_line
+
+
+def _clean_standalone_rss_summary(summary: str, title: str = "", max_length: int = 120) -> str:
+    """清洗独立展示区 RSS 摘要，尽量保留一条短而清晰的简介。"""
+    if not summary:
+        return ""
+
+    cleaned = " ".join(summary.split())
+    if not cleaned:
+        return ""
+
+    if title:
+        title_lower = title.strip().lower()
+        cleaned_lower = cleaned.lower()
+        if cleaned_lower.startswith(title_lower):
+            cleaned = cleaned[len(title.strip()):].lstrip(" :-|.。")
+
+    # 常见 RSS/README 摘要里会把同一句重复两次，优先按句子去重
+    parts = [p.strip() for p in re.split(r"(?<=[.!?。！？])\s+", cleaned) if p.strip()]
+    deduped_parts = []
+    seen = set()
+    for part in parts:
+        normalized = re.sub(r"\s+", " ", part).strip().lower()
+        if normalized and normalized not in seen:
+            seen.add(normalized)
+            deduped_parts.append(part)
+
+    cleaned = deduped_parts[0] if deduped_parts else cleaned
+
+    if len(cleaned) > max_length:
+        cut = cleaned[:max_length].rsplit(" ", 1)[0].strip()
+        cleaned = (cut or cleaned[:max_length]).rstrip(" ,;:") + "..."
+
+    return cleaned
