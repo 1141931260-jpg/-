@@ -992,7 +992,7 @@ class NewsAnalyzer:
             update_info_to_send = self.update_info if cfg["SHOW_VERSION_UPDATE"] else None
 
             # 使用 NotificationDispatcher 发送到所有渠道
-            # RSS/独立展示区数据已在分析流水线中翻译过，跳过重复翻译（仅翻译热榜 report_data）
+            # 统一在通知分发阶段执行翻译，确保独立展示区 RSS 标题和摘要也能翻译
             dispatcher = self.ctx.create_notification_dispatcher()
             results = dispatcher.dispatch_all(
                 report_data=report_data,
@@ -1005,7 +1005,7 @@ class NewsAnalyzer:
                 rss_new_items=rss_new_items,
                 ai_analysis=ai_result,
                 standalone_data=standalone_data,
-                skip_translation=True,
+                skip_translation=False,
             )
 
             if not results:
