@@ -2149,6 +2149,52 @@ def _create_test_html_file(ctx: AppContext) -> Optional[str]:
         return None
 
 
+def _send_direct_wework_test(config: Dict, ctx: AppContext, proxy_url: Optional[str]) -> bool:
+    """直接发送一条企业微信纯文本测试消息，绕过业务分批逻辑。"""
+    webhook_url = (config.get("WEWORK_WEBHOOK_URL") or "").strip()
+    if not webhook_url:
+        return False
+
+    now = ctx.get_time()
+    content = (
+        f"TrendRadar 企业微信连通性测试\n"
+        f"时间：{now.strftime('%Y-%m-%d %H:%M:%S')}\n"
+        f"时区：{ctx.timezone}\n"
+        f"说明：这是一条纯文本测试消息。"
+    )
+
+    proxies = {"http": proxy_url, "https": proxy_url} if proxy_url else None
+    payload = {
+        "msgtype": "text",
+        "text": {
+            "content": content,
+        },
+    }
+
+    try:
+        response = requests.post(
+            webhook_url,
+            headers={"Content-Type": "application/json"},
+            json=payload,
+            proxies=proxies,
+            timeout=30,
+        )
+        if response.status_code != 200:
+            print(f"[测试通知] 企业微信直连测试失败，状态码：{response.status_code}，响应：{response.text}")
+            return False
+
+        result = response.json()
+        if result.get("errcode") == 0:
+            print("[测试通知] 企业微信直连测试发送成功")
+            return True
+
+        print(f"[测试通知] 企业微信直连测试失败，响应：{result}")
+        return False
+    except Exception as e:
+        print(f"[测试通知] 企业微信直连测试异常：{e}")
+        return False
+
+
 def _run_test_notification(config: Dict) -> bool:
     """发送测试通知到已配置渠道"""
     from trendradar.notification import NotificationDispatcher
@@ -2196,6 +2242,11 @@ def _run_test_notification(config: Dict) -> bool:
         if proxy_url:
             print("[测试通知] 检测到代理配置，将使用代理发送")
 
+        wework_direct_enabled = bool(test_config.get("WEWORK_WEBHOOK_URL"))
+        if wework_direct_enabled:
+            # 企业微信测试改为原生 text 消息直发，避免业务渲染逻辑影响连通性判断。
+            test_config["WEWORK_WEBHOOK_URL"] = ""
+
         dispatcher = NotificationDispatcher(
             config=test_config,
             get_time_func=ctx.get_time,
@@ -2217,6 +2268,9 @@ def _run_test_notification(config: Dict) -> bool:
             mode="daily",
             html_file_path=html_file_path,
         )
+
+        if wework_direct_enabled:
+            results["wework"] = _send_direct_wework_test(config, ctx, proxy_url)
 
         if not results:
             print("没有可测试的有效通知渠道（可能配置不完整）。")
