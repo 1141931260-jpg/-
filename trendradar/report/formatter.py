@@ -44,13 +44,21 @@ def format_title_for_platform(
     Returns:
         格式化后的标题字符串
     """
+    cleaned_title = clean_title(title_data["title"])
+    compact_watch = title_data.get("compact_watch", False)
+    meta_line = title_data.get("meta_line", "")
+
+    if compact_watch:
+        if meta_line:
+            return f"{cleaned_title}\n{meta_line}"
+        return cleaned_title
+
     rank_display = format_rank_display(
         title_data["ranks"], title_data["rank_threshold"], platform
     )
 
     # Notification text mode: do not include URLs in title lines.
     link_url = ""
-    cleaned_title = clean_title(title_data["title"])
 
     # 获取关键词标签（platform 模式使用）
     keyword = title_data.get("matched_keyword", "") if show_keyword else ""

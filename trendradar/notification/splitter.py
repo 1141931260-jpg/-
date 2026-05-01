@@ -365,6 +365,7 @@ def split_content_into_batches(
             return current_batch, current_batch_has_content, batches
 
         total_count = len(report_data["stats"])
+        is_watch_report = report_type == "关注项监控"
 
         # 根据 add_separator 决定是否添加前置分割线
         actual_stats_header = ""
@@ -406,7 +407,9 @@ def split_content_into_batches(
 
             # 构建词组标题
             word_header = ""
-            if format_type in ("wework", "bark"):
+            if is_watch_report:
+                word_header = f"{word}（{count}条）\n\n"
+            elif format_type in ("wework", "bark"):
                 if count >= 10:
                     word_header = (
                         f"🔥 {sequence_display} **{word}** : **{count}** 条\n\n"

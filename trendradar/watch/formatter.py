@@ -8,6 +8,25 @@ from pathlib import Path
 from typing import Dict, List
 
 
+def _normalize_watch_time_display(value: str) -> str:
+    if not value:
+        return ""
+    parts = value.split(" ", 1)
+    if not parts:
+        return value
+    date_part = parts[0]
+    time_part = parts[1] if len(parts) > 1 else ""
+    if "-" not in date_part:
+        return value
+    date_bits = date_part.split("-")
+    if len(date_bits) != 2:
+        return value
+    month = str(int(date_bits[0])) if date_bits[0].isdigit() else date_bits[0]
+    day = date_bits[1]
+    normalized = f"{month}-{day}"
+    return f"{normalized} {time_part}".strip()
+
+
 def build_watch_report_data(results: List[Dict], rank_threshold: int = 10) -> Dict:
     stats = []
     total_new_count = 0
@@ -17,17 +36,22 @@ def build_watch_report_data(results: List[Dict], rank_threshold: int = 10) -> Di
         if grouped_items:
             titles = []
             for index, news in enumerate(grouped_items, start=1):
+                source_name = news.get("source_name", result.get("source_name", "topic_news"))
+                time_display = _normalize_watch_time_display(news.get("time_display", ""))
+                meta_line = "｜".join(part for part in [time_display, source_name] if part)
                 titles.append(
                     {
-                        "title": f"{news.get('title', '')}\n来源：{news.get('source_name', '')}",
-                        "source_name": news.get("source_name", result.get("source_name", "topic_news")),
-                        "time_display": news.get("time_display", ""),
+                        "title": news.get("title", ""),
+                        "source_name": source_name,
+                        "time_display": time_display,
                         "count": 1,
                         "ranks": [index],
                         "rank_threshold": rank_threshold,
                         "url": news.get("url", ""),
                         "mobileUrl": news.get("url", ""),
-                        "is_new": True,
+                        "is_new": False,
+                        "compact_watch": True,
+                        "meta_line": meta_line,
                     }
                 )
             total_new_count += len(titles)
@@ -41,16 +65,21 @@ def build_watch_report_data(results: List[Dict], rank_threshold: int = 10) -> Di
             continue
 
         total_new_count += 1
+        source_name = result.get("source_name", result.get("watch_type", "watch"))
+        time_display = _normalize_watch_time_display(result.get("time_display", ""))
+        meta_line = "｜".join(part for part in [time_display, source_name] if part)
         item = {
             "title": result["message"],
-            "source_name": result.get("source_name", result.get("watch_type", "watch")),
-            "time_display": result.get("time_display", ""),
+            "source_name": source_name,
+            "time_display": time_display,
             "count": 1,
             "ranks": [1],
             "rank_threshold": rank_threshold,
             "url": result.get("url", ""),
             "mobileUrl": result.get("url", ""),
-            "is_new": result.get("changed", False),
+            "is_new": False,
+            "compact_watch": True,
+            "meta_line": meta_line,
         }
         stats.append(
             {
