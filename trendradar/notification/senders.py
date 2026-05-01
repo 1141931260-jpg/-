@@ -30,7 +30,11 @@ from urllib.parse import urlparse
 import requests
 
 from .batch import add_batch_headers, get_max_batch_header_size
-from .formatters import convert_markdown_to_mrkdwn, strip_markdown
+from .formatters import (
+    convert_markdown_to_mrkdwn,
+    normalize_notification_text,
+    strip_markdown,
+)
 
 
 def _render_ai_analysis(ai_analysis: Any, channel: str) -> str:
@@ -161,6 +165,7 @@ def send_to_feishu(
 
     # 逐批发送
     for i, batch_content in enumerate(batches, 1):
+        batch_content = normalize_notification_text(batch_content, "feishu")
         content_size = len(batch_content.encode("utf-8"))
         print(
             f"发送{log_prefix}第 {i}/{len(batches)} 批次，大小：{content_size} 字节 [{report_type}]"
@@ -305,6 +310,7 @@ def send_to_dingtalk(
 
     # 逐批发送
     for i, batch_content in enumerate(batches, 1):
+        batch_content = normalize_notification_text(batch_content, "dingtalk")
         content_size = len(batch_content.encode("utf-8"))
         print(
             f"发送{log_prefix}第 {i}/{len(batches)} 批次，大小：{content_size} 字节 [{report_type}]"
@@ -331,12 +337,12 @@ def send_to_dingtalk(
                         time.sleep(batch_interval)
                 else:
                     print(
-                        f"{log_prefix}第 {i}/{len(batches)} 批次发送失败 [{report_type}]，错误：{result.get('errmsg')}"
+                        f"{log_prefix}第 {i}/{len(batches)} 批次发送失败 [{report_type}]，错误：{result.get('errmsg')}，响应：{result}"
                     )
                     return False
             else:
                 print(
-                    f"{log_prefix}第 {i}/{len(batches)} 批次发送失败 [{report_type}]，状态码：{response.status_code}"
+                    f"{log_prefix}第 {i}/{len(batches)} 批次发送失败 [{report_type}]，状态码：{response.status_code}，响应：{response.text}"
                 )
                 return False
         except Exception as e:
@@ -442,6 +448,7 @@ def send_to_wework(
 
     # 逐批发送
     for i, batch_content in enumerate(batches, 1):
+        batch_content = normalize_notification_text(batch_content, "wework")
         # 根据消息类型构建 payload
         if is_text_mode:
             # text 格式：去除 markdown 语法
@@ -572,6 +579,7 @@ def send_to_telegram(
 
     # 逐批发送
     for i, batch_content in enumerate(batches, 1):
+        batch_content = normalize_notification_text(batch_content, "telegram")
         content_size = len(batch_content.encode("utf-8"))
         print(
             f"发送{log_prefix}第 {i}/{len(batches)} 批次，大小：{content_size} 字节 [{report_type}]"
@@ -889,6 +897,7 @@ def send_to_ntfy(
     # 逐批发送（反向顺序）
     success_count = 0
     for idx, batch_content in enumerate(reversed_batches, 1):
+        batch_content = normalize_notification_text(batch_content, "ntfy")
         # 计算正确的批次编号（用户视角的编号）
         actual_batch_num = total_batches - idx + 1
 
@@ -1076,6 +1085,7 @@ def send_to_bark(
     # 逐批发送（反向顺序）
     success_count = 0
     for idx, batch_content in enumerate(reversed_batches, 1):
+        batch_content = normalize_notification_text(batch_content, "bark")
         # 计算正确的批次编号（用户视角的编号）
         actual_batch_num = total_batches - idx + 1
 
@@ -1231,6 +1241,7 @@ def send_to_slack(
 
     # 逐批发送
     for i, batch_content in enumerate(batches, 1):
+        batch_content = normalize_notification_text(batch_content, "slack")
         # 转换 Markdown 到 mrkdwn 格式
         mrkdwn_content = convert_markdown_to_mrkdwn(batch_content)
 
@@ -1356,6 +1367,7 @@ def send_to_generic_webhook(
 
     # 逐批发送
     for i, batch_content in enumerate(batches, 1):
+        batch_content = normalize_notification_text(batch_content, "generic_webhook")
         content_size = len(batch_content.encode("utf-8"))
         print(
             f"发送{log_prefix}第 {i}/{len(batches)} 批次，大小：{content_size} 字节 [{report_type}]"

@@ -267,7 +267,7 @@ def collect_github_projects(item, timeout: int, user_agent: str, proxy_url: Opti
             base_name = repo.get("full_name", "")
             summary = _clean_text(repo.get("description", "") or "")[:280] or base_name
             brief = _shorten_cn(_brief_from_text(repo.get("full_name", ""), summary))
-            title = f"{base_name} | ★ {repo.get('stargazers_count', 0)}｜{brief}"
+            title = f"{base_name} | 星标 {repo.get('stargazers_count', 0)}｜{brief}"
             items.append(
                 {
                     "title": title,

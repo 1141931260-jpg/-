@@ -8,6 +8,59 @@
 import re
 
 
+_SYMBOL_REPLACEMENTS = {
+    "★": "星标 ",
+    "🔥": "热门 ",
+    "📈": "上升 ",
+    "📌": "重点 ",
+    "🆕": "新增 ",
+    "⚠️": "警告 ",
+    "⚠": "警告 ",
+    "📰": "订阅 ",
+    "📋": "汇总 ",
+    "✨": "分析 ",
+    "🔺": "上升",
+    "🔻": "下降",
+    "➡": "->",
+}
+
+
+def normalize_notification_text(text: str, channel: str = "") -> str:
+    """统一净化通知文本，避免特殊符号和不兼容样式影响推送。"""
+    if not text:
+        return text
+
+    normalized = text
+    for old, new in _SYMBOL_REPLACEMENTS.items():
+        normalized = normalized.replace(old, new)
+
+    # 规整多余空格，避免替换后留下双空格。
+    normalized = re.sub(r"[ \t]{2,}", " ", normalized)
+
+    if channel == "wework":
+        # 企业微信 markdown 仅支持 comment/info/warning 三种颜色。
+        normalized = re.sub(
+            r"<font\s+color=['\"]grey['\"]>",
+            '<font color="comment">',
+            normalized,
+            flags=re.I,
+        )
+        normalized = re.sub(
+            r"<font\s+color=['\"]orange['\"]>",
+            '<font color="info">',
+            normalized,
+            flags=re.I,
+        )
+        normalized = re.sub(
+            r"<font\s+color=['\"]red['\"]>",
+            '<font color="warning">',
+            normalized,
+            flags=re.I,
+        )
+
+    return normalized
+
+
 def strip_markdown(text: str) -> str:
     """去除文本中的 markdown 语法格式，用于个人微信推送
 
