@@ -42,9 +42,3 @@ Key sections:
 - `notification`
 - `ai`
 - `ai_translation`
-
-## Notes
-
-This repository is a locally maintained derivative of an open-source project, adjusted for a simpler deployment and notification workflow.
-
-The project remains under GPL-3.0. See `LICENSE`.

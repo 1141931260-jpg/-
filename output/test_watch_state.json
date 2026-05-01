@@ -1,0 +1,10 @@
+{
+  "watches": {
+    "weibo-no-cookie": {
+      "title": "???????",
+      "watch_type": "feed_update",
+      "updated_at": "2026-05-01T18:57:35.348471",
+      "last_error": "需要登录态，当前 Cookie 无效或缺失"
+    }
+  }
+}

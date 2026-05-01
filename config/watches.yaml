@@ -1,0 +1,160 @@
+# TrendRadar 关注项配置
+watch:
+  enabled: true
+
+  # 运行状态持久化文件
+  state_file: "output/watch_state.json"
+
+  auto_discovery:
+    enabled: true
+    max_candidates: 3
+    # false: 只给出候选来源，等待人工确认
+    # true: 直接采用搜索到的第一个候选来源
+    auto_activate_resolved: false
+
+  fetch:
+    timeout: 20
+    user_agent: "TrendRadar Watch/1.0"
+
+  changedetection:
+    # 例如: "https://changedetection.example.com"
+    # 建议正式环境通过 GitHub Secrets / 环境变量 CHANGEDETECTION_BASE_URL 提供
+    base_url: ""
+    # 建议正式环境通过 GitHub Secrets / 环境变量 CHANGEDETECTION_API_KEY 提供
+    api_key: ""
+    timeout: 20
+
+  items:
+    - id: "deepseek-official"
+      title: "DeepSeek 官方更新"
+      query: "DeepSeek"
+      type: "topic_news"
+      mode: "topic_news"
+      enabled: true
+      max_items: 10
+      time_window_hours: 24
+      source_policy: "official_only"
+      keywords:
+        - "DeepSeek"
+        - "Release"
+        - "API"
+        - "模型"
+        - "更新"
+        - "公告"
+        - "文档"
+      source_hints:
+        - "api-docs.deepseek.com"
+      source_urls:
+        - "https://api-docs.deepseek.com/sitemap.xml"
+      backend_options:
+        general_search: false
+
+    - id: "github-trending-projects"
+      title: "GitHub 今日热门项目"
+      type: "github_projects"
+      mode: "github_projects"
+      enabled: true
+      max_items: 5
+      time_window_hours: 24
+      backend_options:
+        category: "trending"
+        feed_url: "https://mshibanami.github.io/GitHubTrendingRSS/daily/all.xml"
+
+    - id: "github-rising-projects"
+      title: "GitHub 近24小时高星新项目"
+      type: "github_projects"
+      mode: "github_projects"
+      enabled: true
+      max_items: 5
+      time_window_hours: 24
+      backend_options:
+        category: "rising"
+
+    - id: "china-security-law-topic"
+      title: "中国安全领域最新法律法规"
+      query: "中国 网络安全 数据安全 个人信息保护 法律 法规"
+      type: "topic_news"
+      mode: "topic_news"
+      enabled: true
+      max_items: 10
+      time_window_hours: 24
+      source_policy: "official_media_community"
+      keywords:
+        - "网络安全"
+        - "数据安全"
+        - "个人信息保护"
+        - "法律"
+        - "法规"
+        - "条例"
+        - "办法"
+      source_hints:
+        - "gov.cn"
+        - "miit.gov.cn"
+        - "cac.gov.cn"
+      backend_options:
+        general_search: false
+
+    - id: "major-safety-incident-topic"
+      title: "重大安全生产事故"
+      query: "重大 安全生产 事故"
+      type: "topic_news"
+      mode: "topic_news"
+      enabled: true
+      max_items: 10
+      time_window_hours: 24
+      source_policy: "official_media_community"
+      keywords:
+        - "事故"
+        - "调查报告"
+        - "通报"
+        - "死亡"
+        - "受伤"
+        - "坠落"
+        - "机械伤害"
+        - "爆炸"
+        - "中毒"
+        - "火灾"
+        - "被卷入"
+      source_hints:
+        - "gov.cn"
+        - "mem.gov.cn"
+      backend_options:
+        exclude_keywords:
+          - "检查"
+          - "部署"
+          - "会议"
+          - "节前"
+          - "防范"
+          - "明查暗访"
+          - "工作安排"
+          - "专项指导"
+          - "推进会"
+          - "风险隐患"
+          - "开展"
+          - "行动"
+          - "保安全"
+          - "严查控"
+
+    # 商品价格监控示例
+    # - id: "iphone-price"
+    #   title: "iPhone 16 Pro 是否降价"
+    #   type: "price"
+    #   enabled: true
+    #   mode: "manual"
+    #   push_policy: "report_no_change"
+    #   source_urls:
+    #     - "https://example.com/product"
+
+    # 主题聚合示例
+    # - id: "openai-topic"
+    #   title: "OpenAI"
+    #   query: "OpenAI"
+    #   type: "topic_news"
+    #   mode: "topic_news"
+    #   enabled: true
+    #   max_items: 10
+    #   time_window_hours: 24
+    #   source_policy: "official_media_community"
+    #   source_hints:
+    #     - "openai.com"
+    #     - "https://github.com/openai/openai-python"

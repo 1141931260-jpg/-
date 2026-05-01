@@ -446,6 +446,48 @@ def _load_webhook_config(config_data: Dict) -> Dict:
     }
 
 
+def _load_watch_config(config_path: str) -> Dict:
+    """加载关注项监控配置。"""
+    watch_path = Path(config_path).parent / "watches.yaml"
+    if not watch_path.exists():
+        print(f"[关注项] watches.yaml 未找到: {watch_path}，使用默认关闭配置")
+        return {
+            "ENABLED": False,
+            "STATE_FILE": "output/watch_state.json",
+            "FETCH_TIMEOUT": 15,
+            "USER_AGENT": "TrendRadar Watch/1.0",
+            "MAX_CANDIDATES": 3,
+            "AUTO_DISCOVERY_ENABLED": True,
+            "AUTO_ACTIVATE_RESOLVED": False,
+            "ITEMS": [],
+        }
+
+    with open(watch_path, "r", encoding="utf-8") as f:
+        watch_data = yaml.safe_load(f) or {}
+
+    watch = watch_data.get("watch", {})
+    auto_discovery = watch.get("auto_discovery", {})
+    fetch = watch.get("fetch", {})
+    changedetection = watch.get("changedetection", {})
+
+    print(f"[关注项] watches.yaml 加载成功: {watch_path}")
+    return {
+        "ENABLED": watch.get("enabled", False),
+        "STATE_FILE": watch.get("state_file", "output/watch_state.json"),
+        "FETCH_TIMEOUT": fetch.get("timeout", 15),
+        "USER_AGENT": fetch.get("user_agent", "TrendRadar Watch/1.0"),
+        "MAX_CANDIDATES": auto_discovery.get("max_candidates", 3),
+        "AUTO_DISCOVERY_ENABLED": auto_discovery.get("enabled", True),
+        "AUTO_ACTIVATE_RESOLVED": auto_discovery.get("auto_activate_resolved", False),
+        "CHANGEDETECTION": {
+            "BASE_URL": _get_env_str("CHANGEDETECTION_BASE_URL") or changedetection.get("base_url", ""),
+            "API_KEY": _get_env_str("CHANGEDETECTION_API_KEY") or changedetection.get("api_key", ""),
+            "TIMEOUT": changedetection.get("timeout", 20),
+        },
+        "ITEMS": watch.get("items") or [],
+    }
+
+
 def _print_notification_sources(config: Dict) -> None:
     """打印通知渠道配置来源信息"""
     notification_sources = []
@@ -606,6 +648,9 @@ def load_config(config_path: Optional[str] = None) -> Dict[str, Any]:
 
     # Webhook 配置
     config.update(_load_webhook_config(config_data))
+
+    # 关注项监控配置
+    config["WATCH"] = _load_watch_config(config_path)
 
     # 打印通知渠道配置来源
     _print_notification_sources(config)

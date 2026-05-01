@@ -1,0 +1,386 @@
+{
+  "watches": {
+    "fanbingbing-weibo": {
+      "title": "范冰冰微博有没有更新",
+      "watch_type": "feed_update",
+      "updated_at": "2026-05-01T21:04:22.521858",
+      "last_error": "页面正文为空"
+    },
+    "deepseek-news": {
+      "title": "DeepSeek 官方更新有没有变化",
+      "watch_type": "generic_page_change",
+      "updated_at": "2026-05-01T21:05:32.624666",
+      "last_error": "404 Client Error: Not Found for url: https://api-docs.deepseek.com/news/",
+      "last_snapshot": {
+        "title": "Your First API Call | DeepSeek API Docs",
+        "summary": "Your First API Call | DeepSeek API Docs\nSkip to main content\nDeepSeek API Docs\nEnglish English\n中文（中国）\nDeepSeek Platform\nQuick Start\nYour First API Call\nModels & Pricing\nToken & Token Usage\nRate Limit\nError Codes\nAgent Integrations\nAPI Guides\nThinking Mode\nMulti-round Conversation\nChat Prefix Completion (Beta)\nFIM Completion (Beta)\nJSON Output\nTool Calls",
+        "fingerprint": "6dddb6d969c3187fccd2f47d2b08e08c4fa9adad",
+        "event": "no_change"
+      },
+      "last_url": "https://api-docs.deepseek.com/",
+      "last_change_at": "2026-05-01T21:00:12.120705"
+    },
+    "deepseek-v4-release": {
+      "title": "DeepSeek V4 发布页有没有变化",
+      "watch_type": "generic_page_change",
+      "updated_at": "2026-05-01T21:05:33.491338",
+      "last_snapshot": {
+        "title": "DeepSeek V4 Preview Release | DeepSeek API Docs",
+        "summary": "DeepSeek V4 Preview Release | DeepSeek API Docs\nSkip to main content\nDeepSeek API Docs\nEnglish English\n中文（中国）\nDeepSeek Platform\nQuick Start\nYour First API Call\nModels & Pricing\nToken & Token Usage\nRate Limit\nError Codes\nAgent Integrations\nAPI Guides\nThinking Mode\nMulti-round Conversation\nChat Prefix Completion (Beta)\nFIM Completion (Beta)\nJSON Output\nTool Calls",
+        "fingerprint": "de67a822e7b98d5cbe15c077e222351d9d10cfbc",
+        "event": "no_change"
+      },
+      "last_url": "https://api-docs.deepseek.com/news/news260424",
+      "last_change_at": "2026-05-01T21:00:13.175861"
+    },
+    "deepseek-r1-release": {
+      "title": "DeepSeek R1 发布页有没有变化",
+      "watch_type": "generic_page_change",
+      "updated_at": "2026-05-01T21:05:34.313366",
+      "last_snapshot": {
+        "title": "DeepSeek-R1 Release | DeepSeek API Docs",
+        "summary": "DeepSeek-R1 Release | DeepSeek API Docs\nSkip to main content\nDeepSeek API Docs\nEnglish English\n中文（中国）\nDeepSeek Platform\nQuick Start\nYour First API Call\nModels & Pricing\nToken & Token Usage\nRate Limit\nError Codes\nAgent Integrations\nAPI Guides\nThinking Mode\nMulti-round Conversation\nChat Prefix Completion (Beta)\nFIM Completion (Beta)\nJSON Output\nTool Calls",
+        "fingerprint": "6138509eae36915f8d1c4fa4b495dd9f6e4fcf5b",
+        "event": "no_change"
+      },
+      "last_url": "https://api-docs.deepseek.com/news/news250120",
+      "last_change_at": "2026-05-01T21:00:13.989729"
+    },
+    "openai-blog": {
+      "title": "OpenAI 官方博客有没有更新",
+      "watch_type": "generic_page_change",
+      "updated_at": "2026-05-01T21:05:35.131877",
+      "last_snapshot": {
+        "title": "OpenAI 新闻动态 | OpenAI",
+        "summary": "OpenAI 新闻动态 | OpenAI\n跳至主要内容 研究\n开发人员\n基金会 （在新窗口中打开）\n登录 试用 ChatGPT （在新窗口中打开）\n试用 ChatGPT （在新窗口中打开） 登录\nOpenAI All\n安全防护\n全球事务\nAI 采用\n切换卡片以显示媒体\n切换卡片以隐藏媒体\n推出高级账户安全保护\n产品 2026年4月30日\nOur commitment to community safety\n安全 2026年4月28日\nOpenAI 模型、Codex 和托管智能体上线 AWS\n产品 2026年4月28日\nMicrosoft 与 OpenAI 合作伙伴关系的下一阶段\n公司 2026年4月27日",
+        "fingerprint": "d0b656e2688fe8d633615c1bfbae8bdded316b11",
+        "event": "no_change"
+      },
+      "last_url": "https://openai.com/zh-Hans-CN/news/",
+      "last_change_at": "2026-05-01T21:00:52.320601",
+      "last_error": "HTTPSConnectionPool(host='openai.com', port=443): Read timed out. (read timeout=15)"
+    },
+    "anthropic-news": {
+      "title": "Anthropic Newsroom 有没有更新",
+      "watch_type": "generic_page_change",
+      "updated_at": "2026-05-01T21:05:50.891543",
+      "last_snapshot": {
+        "title": "Newsroom \\ Anthropic",
+        "summary": "Skip to main content Skip to footer\nResearch\nEconomic Futures\nCommitments\nLearn\nNews\nTry Claude\nNewsroom\nPress inquires press@anthropic.com\nNon-media inquiries support@anthropic.com\nMedia assets Download press kit\nIntroducing Claude Opus 4.7\nProduct Apr 16, 2026\nOur latest Opus model brings stronger performance across coding, agents, vision, and multi-step tasks, with greater thoroughness and consistency on the work that matters most.\nProduct Apr 17, 2026\nIntroducing Claude Design by Anthropic Labs\nToday, we’re launching Claude Design, a new Anthropic Labs product that lets you collaborate with Claude to create polished visual work like designs, prototypes, slides, one-pagers, and more.\nAnnouncements Apr 7, 2026\nProject Glasswing\nA new initiative that brings together Amazon Web Services, Anthropic, Apple, Broadcom, Cisco, CrowdStrike, Google, JPMorganChase, the Linux Foundation, Microsoft, NVIDIA, and Palo Alto Networks in an effort to secure the world's most critical software.",
+        "fingerprint": "c50b501ef8fdbd2277fc0a36bbaaa4f3d5b037cc",
+        "event": "no_change"
+      },
+      "last_url": "https://www.anthropic.com/news",
+      "last_change_at": "2026-05-01T20:45:27.134844"
+    },
+    "google-ai-blog": {
+      "title": "Google AI Blog 有没有更新",
+      "watch_type": "generic_page_change",
+      "updated_at": "2026-05-01T21:05:52.742085",
+      "last_snapshot": {
+        "title": "Official Google AI news and updates | Google Blog",
+        "summary": "Official Google AI news and updates | Google Blog\nSkip to main content\nThe Keyword\nShare\nx.com\nFacebook\nLinkedIn\nMail\nCopy link\nHome\nInnovation & AI\nModels & Research\nGoogle DeepMind\nGoogle Research\nGoogle Labs\nGemini models\nQuantum computing\nSee all\nProducts\nDeveloper tools",
+        "fingerprint": "963bbca9964aaafbc1b7692cef58ccac4635d1df",
+        "event": "no_change"
+      },
+      "last_url": "https://blog.google/innovation-and-ai/technology/ai/",
+      "last_change_at": "2026-05-01T20:45:28.682651"
+    },
+    "huggingface-blog": {
+      "title": "Hugging Face Blog 有没有更新",
+      "watch_type": "generic_page_change",
+      "updated_at": "2026-05-01T21:05:54.482557",
+      "last_snapshot": {
+        "title": "Hugging Face – Blog",
+        "summary": "Hugging Face – Blog\nHugging Face\nModels\nDatasets\nSpaces\nBuckets new\nDocs\nEnterprise\nPricing\nLog In\nSign Up\nCommunity Blog & Articles\nNew Article\ncommunity guide open source collab partnerships research NLP Audio CV RL ethics Diffusion Game Development RLHF Leaderboard Case Studies LeRobot Inference Providers\nNEW 你也可以阅读这篇博客的中文版 Community Articles\nview all\nNEO-unify: Building Native Multimodal Unified Models End to End\nMar 5\n• 146\nPallas for people who know JAX but not kernels yet",
+        "fingerprint": "825dc272f70f65e73237a22a037fd48d898a22b4",
+        "event": "no_change"
+      },
+      "last_url": "https://huggingface.co/blog",
+      "last_change_at": "2026-05-01T20:45:29.881802"
+    },
+    "cn-security-laws-index": {
+      "title": "中国网络安全和数据安全相关法律法规有没有新增",
+      "watch_type": "generic_page_change",
+      "updated_at": "2026-05-01T21:05:55.744006",
+      "last_snapshot": {
+        "title": "网络安全和数据安全相关法律法规文件",
+        "summary": "网络安全和数据安全相关法律法规文件\n首页 >\n专题专栏 >\n热点专题 >\n优化营商环境—网络专题 >\n网络安全、数据安全和个人信息保护 >\n网络安全和数据安全\n发布时间：2024-04-15 13:01 来源：信息通信发展司\n1.《中华人民共和国网络安全法》\nhttps://www.miit.gov.cn/zwgk/zcwj/flfg/art/2020/art_b47f3f954273437d9f3ebe880fd6b0b4.html\n2.《中华人民共和国数据安全法》\nhttps://www.miit.gov.cn/zwgk/zcwj/flfg/art/2022/art_284b390b84484f10b0e43eeafaad0f6d.html\n3.《反电信网络诈骗法》\nhttps://www.miit.gov.cn/jgsj/zfs/fl/art/2022/art_d30139b442a141f48f05775d8c0b3cee.html\n4.《关键信息基础设施安全保护条例》\nhttps://www.miit.gov.cn/xwdt/szyw/art/2021/art_8a317dd6beab43e396e278fde38af0bb.html\n5.工业和信息化部关于印发《公共互联网网络安全威胁监测与处置办法》的通知\nhttps://www.miit.gov.cn/zwgk/zcwj/wjfb/zh/art/2020/art_2da1d9a1cf0a48d2879bc966d45fc041.html\n6.《通信网络安全防护管理办法》\nhttps://www.miit.gov.cn/jgsj/waj/wjfb/art/2020/art_540e0eb014284206b4e504c9e3b0118d.html",
+        "fingerprint": "682f91c1695beefd2530989c0af8b070524d8f51",
+        "event": "no_change"
+      },
+      "last_url": "https://www.miit.gov.cn/ztzl/rdzt/yhyshjwlzt/wlaqsjaqhgrxxbh/wlaqhsjaq/art/2024/art_4970fd737c3e49049c525b3945a6e39d.html",
+      "last_change_at": "2026-05-01T21:00:26.129961"
+    },
+    "cn-network-data-regulation": {
+      "title": "《网络数据安全管理条例》有没有变化",
+      "watch_type": "generic_page_change",
+      "updated_at": "2026-05-01T21:05:56.616176",
+      "last_snapshot": {
+        "title": "网络数据安全管理条例_信息产业（含电信）_中国政府网",
+        "summary": "网络数据安全管理条例_信息产业（含电信）_中国政府网\n个人中心\nhttps://www.gov.cn/\n网站无障碍开关 -->\n2024-09-30 17:00\n首页  >  信息公开   > 国务院文件 > 工业、交通 > 信息产业（含电信）\n字号： 默认\n索 引 号：\n000014349/2024-00078\n主题分类：\n工业、交通\\信息产业（含电信）\n发文机关：\n成文日期：\n2024年09月24日\n标　　题：\n网络数据安全管理条例\n发文字号：\n国令第790号\n发布日期：\n2024年09月30日",
+        "fingerprint": "cc9f6b81e5e0ce2d6c5d815f72ff0e03590be6c8",
+        "event": "no_change"
+      },
+      "last_url": "https://www.gov.cn/zhengce/content/202409/content_6977766.htm",
+      "last_change_at": "2026-05-01T21:00:27.216487"
+    },
+    "cn-cyber-violence-rule": {
+      "title": "《网络暴力信息治理规定》有没有变化",
+      "watch_type": "generic_page_change",
+      "updated_at": "2026-05-01T21:05:57.438064",
+      "last_snapshot": {
+        "title": "网络暴力信息治理规定_国家互联网信息办公室_中国政府网",
+        "summary": "网络暴力信息治理规定_国家互联网信息办公室_中国政府网\n网络暴力信息治理规定__中国政府网\n个人中心\nhttps://www.gov.cn/\n网站无障碍开关 -->\n国家网信办网站\n【字体： 大 中 小 】\n视频下载\n网络暴力信息治理规定\n第一章 总 则\n第一条  为了治理网络暴力信息，营造良好网络生态，保障公民合法权益，维护社会公共利益，根据《中华人民共和国网络安全法》、《中华人民共和国个人信息保护法》、《中华人民共和国治安管理处罚法》、《互联网信息服务管理办法》等法律、行政法规，制定本规定。\n第二条  中华人民共和国境内的网络暴力信息治理活动，适用本规定。\n第三条  网络暴力信息治理坚持源头防范、防控结合、标本兼治、协同共治的原则。\n第四条  国家网信部门负责统筹协调全国网络暴力信息治理和相关监督管理工作。国务院公安、文化和旅游、广播电视等有关部门依据各自职责开展网络暴力信息的监督管理工作。\n地方网信部门负责统筹协调本行政区域内网络暴力信息治理和相关监督管理工作。地方公安、文化和旅游、广播电视等有关部门依据各自职责开展本行政区域内网络暴力信息的监督管理工作。\n第五条  鼓励网络相关行业组织加强行业自律，开展网络暴力信息治理普法宣传，督促指导网络信息服务提供者加强网络暴力信息治理并接受社会监督，为遭受网络暴力信息侵害的用户提供帮扶救助等支持。\n第二章 一般规定\n第六条  网络信息服务提供者和用户应当坚持社会主义核心价值观，遵守法律法规，尊重社会公德和伦理道德，促进形成积极健康、向上向善的网络文化，维护良好网络生态。\n第七条  网络信息服务提供者应当履行网络信息内容管理主体责任，建立完善网络暴力信息治理机制，健全用户注册、账号管理、个人信息保护、信息发布审核、监测预警、识别处置等制度。\n第八条  网络信息服务提供者为用户提供信息发布、即时通讯等服务的，应当依法对用户进行真实身份信息认证。用户不提供真实身份信息的，网络信息服务提供者不得为其提供相关服务。",
+        "fingerprint": "349120c5bbf07601ecf4925d31f41eb54e396be1",
+        "event": "no_change"
+      },
+      "last_url": "https://www.gov.cn/zhengce/202501/content_6997441.htm",
+      "last_change_at": "2026-05-01T21:00:28.044754"
+    },
+    "cn-genai-rule": {
+      "title": "《生成式人工智能服务管理暂行办法》有没有变化",
+      "watch_type": "generic_page_change",
+      "updated_at": "2026-05-01T21:05:58.299411",
+      "last_snapshot": {
+        "title": "生成式人工智能服务管理暂行办法",
+        "summary": "生成式人工智能服务管理暂行办法\n首页 >\n部门规章 >\n工业和信息化部规章\n下载图片版\n下载文字版\n（《生成式人工智能服务管理暂行办法》已经2023年5月23日国家互联网信息办公室2023年第12次室务会会议审议通过，并经国家发展和改革委员会、教育部、科学技术部、工业和信息化部、公安部、国家广播电视总局同意，自2023年8月15日起施行。）\n第一章 总 则\n第一条  为了促进生成式人工智能健康发展和规范应用，维护国家安全和社会公共利益，保护公民、法人和其他组织的合法权益，根据《中华人民共和国网络安全法》、《中华人民共和国数据安全法》、《中华人民共和国个人信息保护法》、《中华人民共和国科学技术进步法》等法律、行政法规，制定本办法。\n第二条   利用生成式人工智能技术向中华人民共和国境内公众提供生成文本、图片、音频、视频等内容的服务（以下称生成式人工智能服务），适用本办法。\n国家对利用生成式人工智能服务从事新闻出版、影视制作、文艺创作等活动另有规定的，从其规定。\n行业组织、企业、教育和科研机构、公共文化机构、有关专业机构等研发、应用生成式人工智能技术，未向境内公众提供生成式人工智能服务的，不适用本办法的规定。\n第三条   国家坚持发展和安全并重、促进创新和依法治理相结合的原则，采取有效措施鼓励生成式人工智能创新发展，对生成式人工智能服务实行包容审慎和分类分级监管。\n第四条   提供和使用生成式人工智能服务，应当遵守法律、行政法规，尊重社会公德和伦理道德，遵守以下规定：\n（一）坚持社会主义核心价值观，不得生成煽动颠覆国家政权、推翻社会主义制度，危害国家安全和利益、损害国家形象，煽动分裂国家、破坏国家统一和社会稳定，宣扬恐怖主义、极端主义，宣扬民族仇恨、民族歧视，暴力、淫秽色情，以及虚假有害信息等法律、行政法规禁止的内容；\n（二）在算法设计、训练数据选择、模型生成和优化、提供服务等过程中，采取有效措施防止产生民族、信仰、国别、地域、性别、年龄、职业、健康等歧视；\n（三）尊重知识产权、商业道德，保守商业秘密，不得利用算法、数据、平台等优势，实施垄断和不正当竞争行为；\n（四）尊重他人合法权益，不得危害他人身心健康，不得侵害他人肖像权、名誉权、荣誉权、隐私权和个人信息权益；\n（五）基于服务类型特点，采取有效措施，提升生成式人工智能服务的透明度，提高生成内容的准确性和可靠性。\n第二",
+        "fingerprint": "b0058acc30cf26d1cae2dd4c9ab52e763017d8b3",
+        "event": "no_change"
+      },
+      "last_url": "https://www.miit.gov.cn/zcfg/qtl/art/2023/art_f4e8f71ae1dc43b0980b962907b7738f.html",
+      "last_change_at": "2026-05-01T21:00:28.908811"
+    },
+    "cn-ai-anthro-rule": {
+      "title": "《人工智能拟人化互动服务管理暂行办法》有没有变化",
+      "watch_type": "generic_page_change",
+      "updated_at": "2026-05-01T21:06:00.216358",
+      "last_snapshot": {
+        "title": "人工智能拟人化互动服务管理暂行办法_中央网络安全和信息化委员会办公室",
+        "summary": "人工智能拟人化互动服务管理暂行办法_中央网络安全和信息化委员会办公室\n设为首页 加入收藏 手机版 繁体\n时政要闻\n网信政务\n互动服务\n热点专题\n当前位置： 首页 > 正文\n人工智能拟人化互动服务管理暂行办法\n2026年04月10日 18:13\n中国网信网\n【打印】 【纠错】\n国家互联网信息办公室\n中华人民共和国国家发展和改革委员会\n中华人民共和国工业和信息化部\n中华人民共和国公安部\n国家市场监督管理总局\n第21号\n《人工智能拟人化互动服务管理暂行办法》已经2026年2月2日国家互联网信息办公室2026年第3次室务会会议审议通过，并经国家发展和改革委员会、工业和信息化部、公安部、国家市场监督管理总局同意，现予公布，自2026年7月15日起施行。\n国家互联网信息办公室主任　庄荣文\n国家发展和改革委员会主任　郑栅洁",
+        "fingerprint": "c73b56a5320337e26243abed9145769a1f306b4d",
+        "event": "no_change"
+      },
+      "last_url": "https://www.cac.gov.cn/2026-04/10/c_1777558395078289.htm",
+      "last_change_at": "2026-05-01T21:00:29.724921"
+    },
+    "deepseek-topic": {
+      "title": "DeepSeek",
+      "watch_type": "topic_news",
+      "updated_at": "2026-05-01T21:22:47.031038",
+      "last_snapshot": {
+        "mode": "topic_news",
+        "count": 10,
+        "items": [
+          {
+            "title": "梁文锋、王兴兴若继续读博，会有DeepSeek和宇树科技的今天吗？",
+            "url": "https://news.google.com/rss/articles/CBMiS0FVX3lxTE00cHZHNy1jaS14clFGVFFWbEZLV2tkdXdJbEtsUG1sZVhRczl1NEFxRmNNc0lfUkNvbGUxOHJxOHNKQzBhOEFVTG9fQQ?oc=5",
+            "source_name": "无忧资讯",
+            "published_at": "2026-05-01T11:30:46+00:00"
+          },
+          {
+            "title": "华为算力“开链”|黄仁勋|DeepSeek-V4|Qwen|开源模型|华为AI_手机新浪网",
+            "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxOMmRZdlE1U2VFU2h2eFZXR2NTdi1JdEFNdnNnMjF1aVl3YUR1THpwVFhpRUtSQ1RvZHBTaUNVQXVsTEFodk5OWWQxVTlCX0x4al9HQUlBR1VJQS1nN09XaGRPcW5oZmp0NUtxVXUwczFHV2NyZWtsODBlTWF4RHlYV3h6U1pSQ0pGVk53WEZHMzlZSmx1WUllb1BUS0w0ejhYOGJoSFltN3hQRG1GN2UySW9R?oc=5",
+            "source_name": "新浪财经",
+            "published_at": "2026-05-01T11:15:46+00:00"
+          },
+          {
+            "title": "DeepSeek预测：维拉主场血洗热刺！沃特金斯+罗杰斯双星闪耀，德泽尔比保级梦碎",
+            "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxPQ0dzUEp6Sk5td0h2QU9DUE02Ni1Pcm04SkRXZVREU0o4ZmlNMVZiSWNnVmhaY2RKRTFjaVZOYnlfMUVlQ0dkUUt3YVZsM1lxTVZhcGZWXy1td3Rwd3JEckZPRGRnX0hPbk44X2YyMkhFQnZyT3d0NzlXSG4zX0tPS1EyWTRYS0VjcTlBaEhleE9JdVlTUkVWZEdZNzVCOUxITnZSU2plV2pUaUZqSDNZYzduZDdGLUk?oc=5",
+            "source_name": "手机新浪网",
+            "published_at": "2026-05-01T11:01:29+00:00"
+          },
+          {
+            "title": "梁文锋的担子更重了",
+            "url": "https://news.google.com/rss/articles/CBMimAJBVV95cUxPUXk0Q2pyZ0xQRF9xbzFUSlVTeE42TGdZVy1HQVh2LXdpUFN4TVotUkN2eWszQlFHNFVTc1RhM3NXLW5BYzkwS0o4Z1EyelJLZGhWM1l2VFNNckF3dHlLcGplZ2U4QlJRUzg1OGdfcURwdHRJcGxTQThSaDRueTl5TmktbjFfUE1EOVhWTFI0NWFIUFpSbG90X3B6Z3BQX0hEaG9yQmtsYWVMbE9qSWVmRVdkWmFsVE0yNEM0bjk4MFlQVHIwek9OSFdPT0JRU2FXOVJzYVdCNEN6N2JUazUtYVRGLWllclVIX01seVBLdzl0TU01UUI3Vy00R0NGYjBKR1R4NUg4d0xwOHNGMzRJaWc4TWNHN2Nh?oc=5",
+            "source_name": "新浪财经",
+            "published_at": "2026-05-01T10:23:01+00:00"
+          },
+          {
+            "title": "DeepSeek识图模式是个新模型？！一手实测在此（没错我被灰度到了）",
+            "url": "https://news.google.com/rss/articles/CBMiSEFVX3lxTE5EcUY1dUxyaTd0dkJIS3VLRkxaa1ZvTWp1QXV1YjRGZ3pPLVRvR2RLVEwtYmNhd1cwSXNBbWR3XzZPNTJXZjlMZw?oc=5",
+            "source_name": "智源社区",
+            "published_at": "2026-05-01T10:20:00+00:00"
+          },
+          {
+            "title": "DeepSeek发布多模态论文又连夜删除，主要透露了啥？",
+            "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE5oeVF6aGFwMDlfZDNfMmJqZEZ5OXllUTBDSnFBQTRVUndUbWxYdXRpOV80RHNYRy0yN1I2QkIzYTFCQnVyWlVOMGhZeHU4WTVvRWNzcEQwQlVIaXBDUnpOaExYZk9zelZlOHdxNmp2Qi1VbWJoMUEyUg?oc=5",
+            "source_name": "新浪财经",
+            "published_at": "2026-05-01T10:13:00+00:00"
+          },
+          {
+            "title": "DeepSeek V4 引爆需求：华为昇腾950芯片遭各大厂商“疯抢”",
+            "url": "https://news.google.com/rss/articles/CBMilwRBVV95cUxNNWpFWXpQRGZJRW4zT1ZOY0Ztbm1nYVlBODZxczVlQ2xJbVkyNjduam9TUDVEa3hKRzlPWEhEUXpLUWpRTmdSMExybjF6emJrOU9STjdZbDBZc2kxRjE4SG9pSXZEVkdQTzU2U1A1UHhqWFpVTEs1cW4yZ3ZTTVJpYjhkM1g3M2tkZlNSZVJhMVh5MGlmRkdxdXRiN0l6NDRISDNXNThDaDRDV2l0WkFYVF95TDVPeVRpNXN6dFRQSWljZVpVbVlmV1lzcnlZTWZFaGJ0Vm1fYnFxVGktc2J2QjFfU19pU0xzbkdwSUxlZW9JLTM0U0JmSG9TLVRfZy1UQnRsYUd1ejVmT1FsNlh2ZDhVeXhfTVpWRG51WDZZcHhNUFZYQ3p0a2N4MWNMZVA3OThfeGRhNzVETEkyNnk3MVhkRmJTMHpoZERNZHVCVE9oMldJVUpxekVnRXRfMHJQYThYX1BMVVdsYVVvdjN0ZXUyb09wc1RJRFdsbTl4YVNJT3FOdktBbzg3Ykhvc0xYbjVra2VzV1JqdDBsOVFuM1NPVDZDcF9XaGdkYnBmc1JhV0pfUjFjc2tpRzZobVN0Ym9oczR3Zi1jSnd0cVpBN0lpR3NfUVg1eWF2SlQ1UXNPaFV3bWdORnJkSC1QNWN2TDVUdVRBWV91STdYQTlubERJd2tmc2dPbVBXYmV3aGtOTUZKcEhz?oc=5",
+            "source_name": "MSN",
+            "published_at": "2026-05-01T10:09:42+00:00"
+          },
+          {
+            "title": "DeepSeek V4 技术架构深度解读",
+            "url": "https://news.google.com/rss/articles/CBMiTkFVX3lxTE1tTmplUkJhdzhnMUZzVnRvVTJta3lvYnNmcXBLZF9KcnRwUllNNHR3R1FrbXc4eUhpclhWSFNCRVh0N3lPQVhKaEM3T0Rwdw?oc=5",
+            "source_name": "51CTO",
+            "published_at": "2026-05-01T09:56:41+00:00"
+          },
+          {
+            "title": "国产GPU就是牛！摩尔线程全链路适配DeepSeek-V4",
+            "url": "https://news.google.com/rss/articles/CBMiSEFVX3lxTE16YkduM0xHOXJBdGJQZGcxVWR1Rng1R25vV0JCQUZPTWxNNGU5SmVhWXhXaDA3TXZfaDdPdWhfR1dYd3NEaXVUUA?oc=5",
+            "source_name": "凤凰网",
+            "published_at": "2026-05-01T09:53:21+00:00"
+          },
+          {
+            "title": "DeepSeek首次有了视觉能力，技术论文却被它连夜删掉了",
+            "url": "https://news.google.com/rss/articles/CBMiSEFVX3lxTFBtTklQR1psWVJvZ0FFRzBKR3hWOXFIWkY5aFY5TkljX2FPMEYyT1RsX19YNEFNalg5SjVlY1IyU194Y200TkJHeQ?oc=5",
+            "source_name": "凤凰网",
+            "published_at": "2026-05-01T09:15:42+00:00"
+          }
+        ]
+      },
+      "last_change_at": "2026-05-01T21:22:49.953319"
+    },
+    "china-security-law-topic": {
+      "title": "中国安全领域最新法律法规",
+      "watch_type": "topic_news",
+      "updated_at": "2026-05-01T21:50:38.888193",
+      "last_snapshot": {
+        "mode": "topic_news",
+        "count": 2,
+        "items": [
+          {
+            "title": "中共吕梁市委网络安全和信息化委员会办公室",
+            "url": "https://news.google.com/rss/articles/CBMiU0FVX3lxTE9pM0ZmcXVqeXdfZ1dMbms5VUloSkwwODAzNWx4WHM5LWtRUUN0a2FINENDTjhiakZEOHZldWNoTVJiRll0LURyQnZ6R2dZOFFISkxJ?oc=5",
+            "source_name": "llwxb.gov.cn",
+            "published_at": "2026-05-01T01:35:39+00:00"
+          },
+          {
+            "title": "个人信息保护政策法规问答（2026年4月）",
+            "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE1IS29Jb19Qd2huMGRYdmZGYzdQSVNXcFpjOXJ5MmRSWlh5M0Ztamp0RDd2a1hhdWt0OWlGZHczd0NfWGtuUjRzNnFDeGVUR19ya2RtM2swX20?oc=5",
+            "source_name": "河南网信办",
+            "published_at": "2026-04-30T21:00:50+00:00"
+          }
+        ]
+      },
+      "last_change_at": "2026-05-01T21:50:42.209810"
+    },
+    "major-safety-incident-topic": {
+      "title": "重大安全生产事故",
+      "watch_type": "topic_news",
+      "updated_at": "2026-05-01T21:50:42.209810",
+      "last_snapshot": {
+        "mode": "topic_news",
+        "count": 2,
+        "items": [
+          {
+            "title": "【通报】造成1人死亡！福州连江公布一起跌落事故调查报告",
+            "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxNRDBBVGtNRDZwSmxFZUNtQWJxM0ZkakpKU1dmV0N6dkpsQ081YnM4T1B5UVdIcERqY0tuSTdLVWllc0dPUl9EU3B1c3hWSV8ySnpWdEk5MTh0WmJnaDh2amttaWM2ektIUFlQd3l3ajBsVDNvYmxqM3lOVjY0dXNwelBJMmhrVVdB?oc=5",
+            "source_name": "搜狐网",
+            "published_at": "2026-05-01T10:02:08+00:00"
+          },
+          {
+            "title": "广东一再生资源公司发生机械伤害事故，造成1人死亡，调查报告公布：从业人员在撕碎机未停机状态下，冒险处理异常工况被卷入撕碎机致死",
+            "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxQRGhROHlxVWNCSzF2V1dyVzhEVjgyaGZ0ZlpqdldMdUFiSzJFM0FOLUhGZkZza1ZONVh4MHotNHMzU0FDQUJHbVg1V3I3YXpBUkhDWWJsOGZudUhTLWZBellELUQ0NG1CYUYxRFc1Q2Y3ZWNKeWZCNHFmYkx1ZTJxZ0JpT3llUGlzQnFZQg?oc=5",
+            "source_name": "搜狐网",
+            "published_at": "2026-05-01T04:37:04+00:00"
+          }
+        ]
+      },
+      "last_change_at": "2026-05-01T21:50:45.621356"
+    },
+    "deepseek-official": {
+      "title": "DeepSeek 官方更新",
+      "watch_type": "topic_news",
+      "updated_at": "2026-05-01T21:50:35.931573",
+      "last_snapshot": {
+        "mode": "topic_news",
+        "count": 0,
+        "items": []
+      },
+      "last_change_at": "2026-05-01T21:35:02.228245"
+    },
+    "deepseek-github": {
+      "title": "DeepSeek GitHub 更新",
+      "watch_type": "github_feed",
+      "updated_at": "2026-05-01T21:41:10.438238",
+      "last_snapshot": {
+        "mode": "github_feed",
+        "repo": "deepseek-ai/DeepSeek-V3",
+        "count": 0,
+        "items": []
+      }
+    },
+    "github-trending-projects": {
+      "title": "GitHub 今日热门项目",
+      "watch_type": "github_projects",
+      "updated_at": "2026-05-01T21:50:36.810032",
+      "last_snapshot": {
+        "mode": "github_projects",
+        "category": "trending",
+        "count": 5,
+        "items": [
+          {
+            "title": "warpdotdev/warp",
+            "url": "https://github.com/warpdotdev/warp",
+            "published_at": ""
+          },
+          {
+            "title": "TauricResearch/TradingAgents",
+            "url": "https://github.com/TauricResearch/TradingAgents",
+            "published_at": ""
+          },
+          {
+            "title": "mattpocock/skills",
+            "url": "https://github.com/mattpocock/skills",
+            "published_at": ""
+          },
+          {
+            "title": "obra/superpowers",
+            "url": "https://github.com/obra/superpowers",
+            "published_at": ""
+          },
+          {
+            "title": "lukilabs/craft-agents-oss",
+            "url": "https://github.com/lukilabs/craft-agents-oss",
+            "published_at": ""
+          }
+        ]
+      },
+      "last_change_at": "2026-05-01T21:50:37.957090"
+    },
+    "github-rising-projects": {
+      "title": "GitHub 近24小时高星新项目",
+      "watch_type": "github_projects",
+      "updated_at": "2026-05-01T21:50:37.957090",
+      "last_snapshot": {
+        "mode": "github_projects",
+        "category": "rising",
+        "count": 5,
+        "items": [
+          {
+            "title": "darrylmorley/whatcable | ★ 300",
+            "url": "https://github.com/darrylmorley/whatcable",
+            "published_at": "2026-05-01T07:45:10+00:00"
+          },
+          {
+            "title": "mattpocock/dictionary-of-ai-coding | ★ 291",
+            "url": "https://github.com/mattpocock/dictionary-of-ai-coding",
+            "published_at": "2026-05-01T10:17:05+00:00"
+          },
+          {
+            "title": "TQ-trade/rari-stable-pool-contracts | ★ 84",
+            "url": "https://github.com/TQ-trade/rari-stable-pool-contracts",
+            "published_at": "2026-05-01T06:43:26+00:00"
+          },
+          {
+            "title": "TQ-trade/defidollar-core | ★ 83",
+            "url": "https://github.com/TQ-trade/defidollar-core",
+            "published_at": "2026-05-01T06:43:35+00:00"
+          },
+          {
+            "title": "warpdot-dev/composio | ★ 77",
+            "url": "https://github.com/warpdot-dev/composio",
+            "published_at": "2026-05-01T07:19:17+00:00"
+          }
+        ]
+      },
+      "last_change_at": "2026-05-01T21:50:38.888193"
+    }
+  }
+}

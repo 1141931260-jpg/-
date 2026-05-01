@@ -28,6 +28,8 @@ from trendradar.storage import convert_crawl_results_to_news_data
 from trendradar.utils.time import DEFAULT_TIMEZONE, is_within_days, calculate_days_old
 from trendradar.ai import AIAnalyzer, AIAnalysisResult
 from trendradar.core.scheduler import ResolvedSchedule
+from trendradar.notification import NotificationDispatcher
+from trendradar.watch import WatchService, build_watch_report_data, generate_watch_html
 
 
 def _parse_version(version_str: str) -> Tuple[int, int, int]:
@@ -327,6 +329,84 @@ class NewsAnalyzer:
                 cfg["GENERIC_WEBHOOK_URL"],
             ]
         )
+
+    def _build_watch_dispatcher(self) -> NotificationDispatcher:
+        """为关注项模式创建通知分发器。"""
+        watch_config = copy.deepcopy(self.ctx.config)
+        watch_display = watch_config.setdefault("DISPLAY", {})
+        watch_display["REGION_ORDER"] = ["hotlist"]
+        watch_display["REGIONS"] = {
+            "HOTLIST": True,
+            "NEW_ITEMS": False,
+            "RSS": False,
+            "STANDALONE": False,
+            "AI_ANALYSIS": False,
+        }
+        return NotificationDispatcher(
+            config=watch_config,
+            get_time_func=self.ctx.get_time,
+            split_content_func=self.ctx.split_content,
+            translator=None,
+        )
+
+    def _run_watch_mode(self) -> Optional[str]:
+        """执行关注项监控流程。"""
+        print("[关注项] 已启用关注项监控模式")
+        scheduler = self.ctx.create_scheduler().resolve()
+        print(
+            f"[关注项] 当前调度: collect={'是' if scheduler.collect else '否'}, "
+            f"push={'是' if scheduler.push else '否'}"
+        )
+
+        if not scheduler.collect:
+            print("[关注项] 当前时间段不执行检查")
+            return None
+
+        service = WatchService(self.ctx.config, proxy_url=self.proxy_url)
+        all_results = service.run()
+        if not all_results:
+            print("[关注项] 没有可执行的关注项")
+            return None
+
+        push_results = [item for item in all_results if item.get("should_push")]
+        if push_results:
+            print(f"[关注项] 本轮生成 {len(push_results)} 条可推送结果")
+        else:
+            print("[关注项] 本轮没有需要推送的结果")
+
+        report_data = build_watch_report_data(push_results, self.rank_threshold)
+        html_file = generate_watch_html(
+            report_data=report_data,
+            output_dir="output",
+            date_folder=self.ctx.format_date(),
+            time_filename=self.ctx.format_time(),
+        )
+        print(f"[关注项] HTML 报告已生成: {html_file}")
+
+        has_notification = self._has_notification_configured()
+        if self.ctx.config["ENABLE_NOTIFICATION"] and has_notification and scheduler.push and push_results:
+            dispatcher = self._build_watch_dispatcher()
+            results = dispatcher.dispatch_all(
+                report_data=report_data,
+                report_type="关注项监控",
+                proxy_url=self.proxy_url,
+                mode="current",
+                html_file_path=html_file,
+            )
+            print(f"[关注项] 推送结果: {results}")
+        elif self.ctx.config["ENABLE_NOTIFICATION"] and not has_notification:
+            print("[关注项] 未配置通知渠道，跳过推送")
+        elif not scheduler.push:
+            print("[关注项] 当前时间段不推送，只更新状态")
+
+        if self._should_open_browser() and html_file:
+            file_url = "file://" + str(Path(html_file).resolve())
+            print(f"正在打开关注项 HTML 报告: {file_url}")
+            webbrowser.open(file_url)
+        elif self.is_docker_container and html_file:
+            print(f"[关注项] HTML 报告已生成（Docker 环境）: {html_file}")
+
+        return html_file
 
     def _has_valid_content(
         self, stats: List[Dict], new_titles: Optional[Dict] = None
@@ -1048,9 +1128,13 @@ class NewsAnalyzer:
         now = self.ctx.get_time()
         print(f"当前北京时间: {now.strftime('%Y-%m-%d %H:%M:%S')}")
 
-        if not self.ctx.config["ENABLE_CRAWLER"]:
+        watch_enabled = self.ctx.config.get("WATCH", {}).get("ENABLED", False)
+
+        if not self.ctx.config["ENABLE_CRAWLER"] and not watch_enabled:
             print("爬虫功能已禁用（ENABLE_CRAWLER=False），程序退出")
             return
+        if watch_enabled:
+            print("关注项监控模式已启用，将跳过新闻/RSS 主流程")
 
         has_notification = self._has_notification_configured()
         if not self.ctx.config["ENABLE_NOTIFICATION"]:
@@ -1722,6 +1806,10 @@ class NewsAnalyzer:
         """执行分析流程"""
         try:
             self._initialize_and_check_config()
+
+            if self.ctx.config.get("WATCH", {}).get("ENABLED", False):
+                self._run_watch_mode()
+                return
 
             mode_strategy = self._get_mode_strategy()
 
