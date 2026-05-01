@@ -239,17 +239,11 @@
     "china-security-law-topic": {
       "title": "中国安全领域最新法律法规",
       "watch_type": "topic_news",
-      "updated_at": "2026-05-01T22:56:10.455224",
+      "updated_at": "2026-05-01T23:09:25.396160",
       "last_snapshot": {
         "mode": "topic_news",
-        "count": 2,
+        "count": 1,
         "items": [
-          {
-            "title": "中共吕梁市委网络安全和信息化委员会办公室",
-            "url": "https://news.google.com/rss/articles/CBMiU0FVX3lxTE9pM0ZmcXVqeXdfZ1dMbms5VUloSkwwODAzNWx4WHM5LWtRUUN0a2FINENDTjhiakZEOHZldWNoTVJiRll0LURyQnZ6R2dZOFFISkxJ?oc=5",
-            "source_name": "llwxb.gov.cn",
-            "published_at": "2026-05-01T01:35:39+00:00"
-          },
           {
             "title": "个人信息保护政策法规问答（2026年4月）",
             "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE1IS29Jb19Qd2huMGRYdmZGYzdQSVNXcFpjOXJ5MmRSWlh5M0Ztamp0RDd2a1hhdWt0OWlGZHczd0NfWGtuUjRzNnFDeGVUR19ya2RtM2swX20?oc=5",
@@ -258,42 +252,36 @@
           }
         ]
       },
-      "last_change_at": "2026-05-01T22:56:14.398105"
+      "last_change_at": "2026-05-01T23:09:28.312284"
     },
     "major-safety-incident-topic": {
       "title": "重大安全生产事故",
       "watch_type": "topic_news",
-      "updated_at": "2026-05-01T22:56:14.398105",
+      "updated_at": "2026-05-01T23:09:28.312284",
       "last_snapshot": {
         "mode": "topic_news",
-        "count": 3,
+        "count": 2,
         "items": [
           {
-            "title": "【通报】造成1人死亡！福州连江公布一起跌落事故调查报告",
-            "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxNRDBBVGtNRDZwSmxFZUNtQWJxM0ZkakpKU1dmV0N6dkpsQ081YnM4T1B5UVdIcERqY0tuSTdLVWllc0dPUl9EU3B1c3hWSV8ySnpWdEk5MTh0WmJnaDh2amttaWM2ektIUFlQd3l3ajBsVDNvYmxqM3lOVjY0dXNwelBJMmhrVVdB?oc=5",
-            "source_name": "搜狐网",
-            "published_at": "2026-05-01T10:02:08+00:00"
+            "title": "新田县新电东晖混凝土制品有限责任公司“3·9”一般生产安全事故调查报告",
+            "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTFBGQ3U0MXlSekoxY2J2YlZxWWxrZVh5S2Y4ckNhbkszMTNUbm9rem92ZDhiTUtzR0Z1X2ZDS3hGai1zblc0RVNNQW50eG0xWmJDeDFWdnVmcjZHSmdHZWNYQzd0bnh2QUw3aXhKZi1Icnd3Z2FRTzVFNkpvaw?oc=5",
+            "source_name": "xt.gov.cn",
+            "published_at": "2026-04-27T07:00:00+00:00"
           },
           {
-            "title": "广州市安全生产委员会关于对南沙大岗“4·28”一般事故调查处理工作挂牌督办的函",
-            "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxPVXFoRHhOemExU3ZxRHdnR1pWQjBfNXR5eTByV0Zabjh5X2g1SWRkRlFIajQyb1puN3ViSGREQW92QWxISTYwTE1wMktMQWU2bG9BWkZGczVvWlY4cm4wazJFVVEzOGJfRFVoX1c3bWZkTGp5ek0yR21rdzZhRS1vTmFWdw?oc=5",
-            "source_name": "广州市应急管理局",
-            "published_at": "2026-05-01T07:37:22+00:00"
-          },
-          {
-            "title": "广东一再生资源公司发生机械伤害事故，造成1人死亡，调查报告公布：从业人员在撕碎机未停机状态下，冒险处理异常工况被卷入撕碎机致死",
-            "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxQRGhROHlxVWNCSzF2V1dyVzhEVjgyaGZ0ZlpqdldMdUFiSzJFM0FOLUhGZkZza1ZONVh4MHotNHMzU0FDQUJHbVg1V3I3YXpBUkhDWWJsOGZudUhTLWZBellELUQ0NG1CYUYxRFc1Q2Y3ZWNKeWZCNHFmYkx1ZTJxZ0JpT3llUGlzQnFZQg?oc=5",
-            "source_name": "搜狐网",
-            "published_at": "2026-05-01T04:37:04+00:00"
+            "title": "生产安全事故",
+            "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE9fSDJ4dFNhMDFmM21URS16MzdLS2dpSVIyb254MVdPLUNLQzRMajV1Q2JNdkpJcDBjZ2Frd0NuWGVTX1RQNWsxWlFZV0l2MXVVTS05NjFmVTJZdHc0bUZ3Yw?oc=5",
+            "source_name": "东莞市人民政府",
+            "published_at": "2026-04-25T08:02:40+00:00"
           }
         ]
       },
-      "last_change_at": "2026-05-01T22:56:18.218812"
+      "last_change_at": "2026-05-01T23:09:32.230521"
     },
     "deepseek-official": {
       "title": "DeepSeek 官方更新",
       "watch_type": "topic_news",
-      "updated_at": "2026-05-01T22:56:06.964018",
+      "updated_at": "2026-05-01T23:09:22.272033",
       "last_snapshot": {
         "mode": "topic_news",
         "count": 0,
@@ -315,7 +303,7 @@
     "github-trending-projects": {
       "title": "GitHub 今日热门项目",
       "watch_type": "github_projects",
-      "updated_at": "2026-05-01T22:56:07.783628",
+      "updated_at": "2026-05-01T23:09:23.237465",
       "last_snapshot": {
         "mode": "github_projects",
         "category": "trending",
@@ -348,45 +336,45 @@
           }
         ]
       },
-      "last_change_at": "2026-05-01T22:56:09.067444"
+      "last_change_at": "2026-05-01T23:09:24.436583"
     },
     "github-rising-projects": {
       "title": "GitHub 近24小时高星新项目",
       "watch_type": "github_projects",
-      "updated_at": "2026-05-01T22:56:09.067444",
+      "updated_at": "2026-05-01T23:09:24.436583",
       "last_snapshot": {
         "mode": "github_projects",
         "category": "rising",
         "count": 5,
         "items": [
           {
-            "title": "darrylmorley/whatcable | 星标 357｜线缆识别",
+            "title": "darrylmorley/whatcable | 星标 365｜线缆识别",
             "url": "https://github.com/darrylmorley/whatcable",
             "published_at": "2026-05-01T07:45:10+00:00"
           },
           {
-            "title": "mattpocock/dictionary-of-ai-coding | 星标 306｜AI编程工具",
+            "title": "mattpocock/dictionary-of-ai-coding | 星标 311｜AI编程工具",
             "url": "https://github.com/mattpocock/dictionary-of-ai-coding",
             "published_at": "2026-05-01T10:17:05+00:00"
           },
           {
-            "title": "TQ-trade/rari-stable-pool-contracts | 星标 97｜量化交易",
+            "title": "TQ-trade/rari-stable-pool-contracts | 星标 98｜量化交易",
             "url": "https://github.com/TQ-trade/rari-stable-pool-contracts",
             "published_at": "2026-05-01T06:43:26+00:00"
           },
           {
-            "title": "TQ-trade/defidollar-core | 星标 96｜量化交易",
+            "title": "TQ-trade/defidollar-core | 星标 97｜量化交易",
             "url": "https://github.com/TQ-trade/defidollar-core",
             "published_at": "2026-05-01T06:43:35+00:00"
           },
           {
-            "title": "warpdot-dev/composio | 星标 92｜智能体框架",
+            "title": "warpdot-dev/composio | 星标 94｜智能体框架",
             "url": "https://github.com/warpdot-dev/composio",
             "published_at": "2026-05-01T07:19:17+00:00"
           }
         ]
       },
-      "last_change_at": "2026-05-01T22:56:10.455224"
+      "last_change_at": "2026-05-01T23:09:25.396160"
     }
   }
 }

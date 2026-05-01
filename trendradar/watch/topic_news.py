@@ -8,7 +8,7 @@ import re
 from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 from typing import Dict, List, Optional
-from urllib.parse import quote, urlparse
+from urllib.parse import quote, urljoin, urlparse
 from xml.etree import ElementTree as ET
 
 import requests
@@ -19,6 +19,10 @@ from .fetcher import extract_domain
 TAG_RE = re.compile(r"<[^>]+>")
 SPACE_RE = re.compile(r"\s+")
 GOOGLE_NEWS_SOURCE_SUFFIX_RE = re.compile(r"\s*-\s*([^-\n]{2,60})$")
+HTML_LIST_ITEM_RE = re.compile(
+    r"<li>\s*<a\s+href=[\"'](?P<href>[^\"']+)[\"'][^>]*>(?P<inner>.*?)</a>\s*</li>",
+    re.I | re.S,
+)
 ISO_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}")
 ATOM_NS = {"atom": "http://www.w3.org/2005/Atom"}
 SITEMAP_NS = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
@@ -274,14 +278,52 @@ def _parse_sitemap_items(xml_text: str, default_type: str, default_name: str) ->
     return items
 
 
+def _parse_html_list_items(
+    html_text: str,
+    base_url: str,
+    default_type: str,
+    default_name: str,
+) -> List[Dict]:
+    items: List[Dict] = []
+    for match in HTML_LIST_ITEM_RE.finditer(html_text):
+        href = (match.group("href") or "").strip()
+        inner = match.group("inner") or ""
+        time_match = re.search(
+            r"<span[^>]*>\s*(?P<time>\d{4}-\d{2}-\d{2}(?:\s+\d{2}:\d{2})?)\s*</span>",
+            inner,
+            re.I | re.S,
+        )
+        published_at = _parse_dt(time_match.group("time")) if time_match else None
+        title_html = re.sub(r"<span[^>]*>.*?</span>", "", inner, flags=re.I | re.S)
+        title = _clean_text(title_html)
+        if not title:
+            continue
+        items.append(
+            {
+                "title": title,
+                "summary": title[:280],
+                "url": urljoin(base_url, href),
+                "source_name": default_name,
+                "source_type": default_type,
+                "published_at": published_at,
+            }
+        )
+    return items
+
+
 def _fetch_feed_items(spec: Dict[str, str], timeout: int, user_agent: str, proxy_url: Optional[str]) -> List[Dict]:
     xml_text = _fetch_xml(spec["url"], timeout=timeout, user_agent=user_agent, proxy_url=proxy_url)
     if "<urlset" in xml_text:
         return _parse_sitemap_items(xml_text, spec["source_type"], spec["source_name"])
+    if "<html" in xml_text.lower():
+        return _parse_html_list_items(xml_text, spec["url"], spec["source_type"], spec["source_name"])
     try:
         return _parse_rss_items(xml_text, spec["source_type"], spec["source_name"])
     except Exception:
-        return _parse_atom_items(xml_text, spec["source_type"], spec["source_name"])
+        try:
+            return _parse_atom_items(xml_text, spec["source_type"], spec["source_name"])
+        except Exception:
+            return _parse_html_list_items(xml_text, spec["url"], spec["source_type"], spec["source_name"])
 
 
 def collect_topic_news(item, timeout: int, user_agent: str, proxy_url: Optional[str] = None) -> Dict[str, object]:
