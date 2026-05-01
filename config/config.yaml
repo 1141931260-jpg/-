@@ -313,7 +313,7 @@ notification:
 
     wework:
       webhook_url: "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=fbfe8bef-ceed-4cc8-b759-442bfe28299f"                 # 企业微信机器人 webhook URL
-      msg_type: "markdown"            # 消息类型：markdown(群机器人) | text(个人微信应用)
+      msg_type: "text"                # 消息类型：text(推荐，官方上限2048字节) | markdown(官方上限4096字节)
 
     telegram:
       bot_token: ""                   # Telegram Bot Token
