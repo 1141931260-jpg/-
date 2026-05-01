@@ -26,6 +26,41 @@ def _clean_text(value: str) -> str:
     return SPACE_RE.sub(" ", text).strip()
 
 
+def _shorten_cn(text: str, max_len: int = 10) -> str:
+    value = (text or "").strip()
+    if len(value) <= max_len:
+        return value
+    return value[:max_len]
+
+
+def _brief_from_text(title: str, summary: str) -> str:
+    haystack = f"{title} {summary}".lower()
+    rules = [
+        (["trading", "trade", "quant"], "量化交易"),
+        (["agent", "agents"], "智能体框架"),
+        (["ai coding", "coding"], "AI编程工具"),
+        (["cli", "terminal", "shell"], "命令行工具"),
+        (["browser"], "浏览器工具"),
+        (["dictionary", "glossary"], "术语词典"),
+        (["prompt"], "提示词工具"),
+        (["workflow", "automation"], "自动化工具"),
+        (["api"], "API工具"),
+        (["sdk"], "开发SDK"),
+        (["ui", "design"], "界面设计"),
+        (["finance", "defi"], "金融工具"),
+        (["security"], "安全工具"),
+        (["search"], "搜索工具"),
+        (["chat"], "聊天工具"),
+        (["warp"], "终端工具"),
+        (["cable"], "线缆识别"),
+    ]
+    for keywords, brief in rules:
+        for keyword in keywords:
+            if keyword in haystack:
+                return brief
+    return "开源项目"
+
+
 def _parse_dt(value: str) -> Optional[datetime]:
     raw = (value or "").strip()
     if not raw:
@@ -127,18 +162,23 @@ def _parse_trending_rss(xml_text: str) -> List[Dict]:
     root = ET.fromstring(xml_text)
     items: List[Dict] = []
     for node in root.findall(".//item"):
-        title = _clean_text(node.findtext("title", ""))
+        raw_title = _clean_text(node.findtext("title", ""))
+        title = raw_title
         link = (node.findtext("link", "") or "").strip()
         pub_date = _parse_dt(node.findtext("pubDate", ""))
         description = _clean_text(node.findtext("description", ""))
         repo_name = ""
-        match = REPO_IN_TITLE_RE.match(title)
+        match = REPO_IN_TITLE_RE.match(raw_title)
         if match:
             repo_name = match.group("repo")
+        brief = _shorten_cn(_brief_from_text(raw_title, description))
+        if repo_name:
+            title = f"{repo_name}｜{brief}"
         items.append(
             {
                 "title": title,
                 "summary": description[:280] or title,
+                "brief": brief,
                 "url": link,
                 "source_name": "GitHub Trending",
                 "source_type": "community",
@@ -224,12 +264,15 @@ def collect_github_projects(item, timeout: int, user_agent: str, proxy_url: Opti
         items: List[Dict] = []
         for repo in payload.get("items", [])[:max_items]:
             created_at = _parse_dt(repo.get("created_at", ""))
-            title = f"{repo.get('full_name', '')} | ★ {repo.get('stargazers_count', 0)}"
-            summary = _clean_text(repo.get("description", "") or "")[:280] or title
+            base_name = repo.get("full_name", "")
+            summary = _clean_text(repo.get("description", "") or "")[:280] or base_name
+            brief = _shorten_cn(_brief_from_text(repo.get("full_name", ""), summary))
+            title = f"{base_name} | ★ {repo.get('stargazers_count', 0)}｜{brief}"
             items.append(
                 {
                     "title": title,
                     "summary": summary,
+                    "brief": brief,
                     "url": repo.get("html_url", ""),
                     "source_name": "GitHub Search",
                     "source_type": "community",
