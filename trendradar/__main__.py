@@ -342,10 +342,11 @@ class NewsAnalyzer:
             "STANDALONE": False,
             "AI_ANALYSIS": False,
         }
+        watch_ctx = AppContext(watch_config)
         return NotificationDispatcher(
             config=watch_config,
-            get_time_func=self.ctx.get_time,
-            split_content_func=self.ctx.split_content,
+            get_time_func=watch_ctx.get_time,
+            split_content_func=watch_ctx.split_content,
             translator=None,
         )
 

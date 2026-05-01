@@ -162,6 +162,9 @@ def send_to_feishu(
     batches = add_batch_headers(batches, "feishu", batch_size)
 
     print(f"{log_prefix}消息分为 {len(batches)} 批次发送 [{report_type}]")
+    if not batches:
+        print(f"{log_prefix}没有可发送的有效批次 [{report_type}]")
+        return False
 
     # 逐批发送
     for i, batch_content in enumerate(batches, 1):
@@ -446,6 +449,9 @@ def send_to_wework(
     batches = add_batch_headers(batches, header_format_type, effective_batch_size)
 
     print(f"{log_prefix}消息分为 {len(batches)} 批次发送 [{report_type}]")
+    if not batches:
+        print(f"{log_prefix}没有可发送的有效批次 [{report_type}]")
+        return False
 
     # 逐批发送
     for i, batch_content in enumerate(batches, 1):
