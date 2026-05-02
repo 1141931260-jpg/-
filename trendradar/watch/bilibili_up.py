@@ -314,8 +314,9 @@ def get_pinned_comment(bv_id: str, uid: Optional[int] = None, retries: int = 2) 
     """
     获取视频评论区的UP主回复内容。
 
-    某些UP主（如"一觉醒来发生啥"）会把视频内容总结放在评论区回复中。
-    使用B站HTTP API直接获取评论（bilibili-api-python的get_comments有兼容性问题）。
+    某些UP主（如"一觉醒来发生啥"）会把视频内容总结放在评论区回复中，
+    且由于B站单条评论798字符限制，UP主会通过子评论"续楼"发布剩余内容。
+    本函数会自动获取主评论和所有UP主子评论并拼接为完整文本。
 
     Args:
         bv_id: 视频 BV 号
@@ -323,10 +324,10 @@ def get_pinned_comment(bv_id: str, uid: Optional[int] = None, retries: int = 2) 
         retries: 重试次数
 
     Returns:
-        UP主回复文本，无则返回 None
+        UP主回复文本（含续楼），无则返回 None
     """
     import asyncio
-    from bilibili_api import video as bili_video
+    from bilibili_api import video as bili_video, comment as bili_comment
 
     async def _do_get():
         v = bili_video.Video(bvid=bv_id)
@@ -359,6 +360,9 @@ def get_pinned_comment(bv_id: str, uid: Optional[int] = None, retries: int = 2) 
         "Referer": f"https://www.bilibili.com/video/{bv_id}",
     }
 
+    main_msg = None
+    main_rpid = None
+
     for attempt in range(retries + 1):
         try:
             resp = requests.get(url, params=params, headers=headers, timeout=15)
@@ -377,24 +381,84 @@ def get_pinned_comment(bv_id: str, uid: Optional[int] = None, retries: int = 2) 
             if top:
                 msg = top.get("content", {}).get("message", "")
                 if msg and len(msg) > 50:
-                    return msg
+                    main_msg = msg
+                    main_rpid = top.get("rpid")
 
             # 检查普通回复中的UP主回复
-            replies = reply_data.get("replies") or []
-            for r in replies[:5]:
-                mid = r.get("member", {}).get("mid", "")
-                msg = r.get("content", {}).get("message", "")
-                if uid and str(mid) == str(uid) and msg and len(msg) > 50:
-                    return msg
-                elif not uid and msg and len(msg) > 100:
-                    return msg
+            if not main_msg:
+                replies = reply_data.get("replies") or []
+                for r in replies[:5]:
+                    mid = r.get("member", {}).get("mid", "")
+                    msg = r.get("content", {}).get("message", "")
+                    if uid and str(mid) == str(uid) and msg and len(msg) > 50:
+                        main_msg = msg
+                        main_rpid = r.get("rpid")
+                        break
+                    elif not uid and msg and len(msg) > 100:
+                        main_msg = msg
+                        main_rpid = r.get("rpid")
+                        break
 
-            return None
+            break
         except Exception:
             if attempt < retries:
                 time.sleep(2)
                 continue
-    return None
+
+    if not main_msg or not main_rpid:
+        return main_msg
+
+    # 获取UP主子评论（续楼），拼接完整内容
+    # B站单条评论限798字符，UP主通过子评论续楼发布剩余内容
+    try:
+        async def _get_sub_comments():
+            c = bili_comment.Comment(
+                oid=aid,
+                type_=bili_comment.CommentResourceType.VIDEO,
+                rpid=main_rpid,
+            )
+            all_sub = []
+            for pn in range(1, 10):
+                result = await c.get_sub_comments(page_index=pn)
+                replies = result.get("replies") or []
+                if not replies:
+                    break
+                all_sub.extend(replies)
+            return all_sub
+
+        sub_replies = asyncio.run(_get_sub_comments())
+        if sub_replies:
+            # 收集UP主的子评论，按rpid排序保证顺序
+            up_subs = []
+            for sr in sub_replies:
+                sr_mid = sr.get("member", {}).get("mid", 0)
+                sr_msg = sr.get("content", {}).get("message", "")
+                if uid and str(sr_mid) == str(uid) and sr_msg:
+                    up_subs.append(sr)
+                elif not uid and sr_msg and len(sr_msg) > 50:
+                    up_subs.append(sr)
+
+            if up_subs:
+                up_subs.sort(key=lambda x: x.get("rpid", 0))
+                parts = [main_msg]
+                for sr in up_subs:
+                    sub_msg = sr["content"]["message"]
+                    # 处理续楼截断：主评论在798字符处被截断，
+                    # 子评论开头可能重复截断处的标点
+                    if parts and sub_msg:
+                        last_part = parts[-1]
+                        # 如果上一段以标点结尾（被截断），子评论以相同标点开头，去掉重复
+                        if last_part.endswith(("、", "，", "。", "；")) and sub_msg[0] == last_part[-1]:
+                            sub_msg = sub_msg[1:]
+                        # 直接拼接（不换行），因为是同一句话被截断
+                        parts[-1] = last_part + sub_msg
+                        continue
+                    parts.append(sub_msg)
+                return "\n".join(parts)
+    except Exception:
+        pass
+
+    return main_msg
 
 
 # ──────────────────────────────────────────────

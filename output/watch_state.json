@@ -378,7 +378,7 @@
     "juya-ai-briefing": {
       "title": "橘鸦Juya AI早报",
       "watch_type": "bilibili_up",
-      "updated_at": "2026-05-02T17:27:40.124812",
+      "updated_at": "2026-05-02T18:53:24.084327",
       "last_bv_ids": [
         "BV1m7RLBtE4f"
       ],
@@ -392,6 +392,27 @@
             "title": "OpenAI Codex 新增导入其他Agent配置功能和宠物功能【AI 早报 2026-05-02】",
             "bv_id": "BV1m7RLBtE4f",
             "section_count": 12
+          }
+        ]
+      }
+    },
+    "yijuelai-fashengsha": {
+      "title": "一觉醒来发生啥",
+      "watch_type": "bilibili_up",
+      "updated_at": "2026-05-02T18:53:35.123947",
+      "last_bv_ids": [
+        "BV1LLRGBAE9N"
+      ],
+      "last_change_at": "2026-05-02T18:53:37.217895",
+      "last_snapshot": {
+        "mode": "bilibili_up",
+        "count": 1,
+        "section_count": 26,
+        "items": [
+          {
+            "title": "2026年5月2日信息差，一觉醒来，世界发生了什么【面包涨价！五粮液震惊全网！霍尔木兹海峡被更名为“特朗普海峡”？特朗普：“结束”！】",
+            "bv_id": "BV1LLRGBAE9N",
+            "section_count": 26
           }
         ]
       }

@@ -375,6 +375,7 @@ class NewsAnalyzer:
         else:
             print("[关注项] 本轮没有需要推送的结果")
 
+        # 生成 HTML 报告（合并所有结果）
         report_data = build_watch_report_data(push_results, self.rank_threshold)
         html_file = generate_watch_html(
             report_data=report_data,
@@ -387,14 +388,17 @@ class NewsAnalyzer:
         has_notification = self._has_notification_configured()
         if self.ctx.config["ENABLE_NOTIFICATION"] and has_notification and scheduler.push and push_results:
             dispatcher = self._build_watch_dispatcher()
-            results = dispatcher.dispatch_all(
-                report_data=report_data,
-                report_type="关注项监控",
-                proxy_url=self.proxy_url,
-                mode="current",
-                html_file_path=html_file,
-            )
-            print(f"[关注项] 推送结果: {results}")
+            # 每个关注项单独推送（分批次）
+            for i, result in enumerate(push_results):
+                single_report = build_watch_report_data([result], self.rank_threshold)
+                print(f"[关注项] 推送第 {i+1}/{len(push_results)} 条: {result.get('title', '')}")
+                results = dispatcher.dispatch_all(
+                    report_data=single_report,
+                    report_type="关注项监控",
+                    proxy_url=self.proxy_url,
+                    mode="current",
+                )
+                print(f"[关注项] 推送结果: {results}")
         elif self.ctx.config["ENABLE_NOTIFICATION"] and not has_notification:
             print("[关注项] 未配置通知渠道，跳过推送")
         elif not scheduler.push:
