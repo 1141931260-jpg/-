@@ -307,6 +307,97 @@ def extract_wechat_url(description: str) -> Optional[str]:
 
 
 # ──────────────────────────────────────────────
+# 评论区置顶
+# ──────────────────────────────────────────────
+
+def get_pinned_comment(bv_id: str, uid: Optional[int] = None, retries: int = 2) -> Optional[str]:
+    """
+    获取视频评论区的UP主回复内容。
+
+    某些UP主（如"一觉醒来发生啥"）会把视频内容总结放在评论区回复中。
+    使用B站HTTP API直接获取评论（bilibili-api-python的get_comments有兼容性问题）。
+
+    Args:
+        bv_id: 视频 BV 号
+        uid: UP主 UID，用于匹配UP主的回复
+        retries: 重试次数
+
+    Returns:
+        UP主回复文本，无则返回 None
+    """
+    import asyncio
+    from bilibili_api import video as bili_video
+
+    async def _do_get():
+        v = bili_video.Video(bvid=bv_id)
+        info = await v.get_info()
+        aid = info.get("aid")
+        if not aid:
+            return None
+        return aid
+
+    # 获取 AID
+    aid = None
+    for attempt in range(retries + 1):
+        try:
+            aid = asyncio.run(_do_get())
+            if aid:
+                break
+        except Exception:
+            if attempt < retries:
+                time.sleep(2)
+                continue
+
+    if not aid:
+        return None
+
+    # 使用HTTP API获取评论（更可靠）
+    url = "https://api.bilibili.com/x/v2/reply"
+    params = {"oid": aid, "type": 1, "sort": 2, "pn": 1, "ps": 20}
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        "Referer": f"https://www.bilibili.com/video/{bv_id}",
+    }
+
+    for attempt in range(retries + 1):
+        try:
+            resp = requests.get(url, params=params, headers=headers, timeout=15)
+            data = resp.json()
+            if data.get("code") != 0:
+                if attempt < retries:
+                    time.sleep(2)
+                    continue
+                return None
+
+            reply_data = data.get("data", {})
+
+            # 检查置顶评论
+            upper = reply_data.get("upper", {})
+            top = upper.get("top")
+            if top:
+                msg = top.get("content", {}).get("message", "")
+                if msg and len(msg) > 50:
+                    return msg
+
+            # 检查普通回复中的UP主回复
+            replies = reply_data.get("replies") or []
+            for r in replies[:5]:
+                mid = r.get("member", {}).get("mid", "")
+                msg = r.get("content", {}).get("message", "")
+                if uid and str(mid) == str(uid) and msg and len(msg) > 50:
+                    return msg
+                elif not uid and msg and len(msg) > 100:
+                    return msg
+
+            return None
+        except Exception:
+            if attempt < retries:
+                time.sleep(2)
+                continue
+    return None
+
+
+# ──────────────────────────────────────────────
 # 文章获取（Agent Reach: Jina Reader）
 # ──────────────────────────────────────────────
 
@@ -434,6 +525,42 @@ def parse_description_timestamps(description: str, bv_id: str = "") -> List[Dict
     return sections
 
 
+def parse_numbered_list(text: str, bv_id: str = "") -> List[Dict[str, Any]]:
+    """
+    解析编号列表格式的评论内容。
+
+    常见格式（如"一觉醒来发生啥"UP主的评论区）：
+        2026年5月2日信息差，
+        1、xxx
+        2、xxx
+        3、xxx
+
+    Returns:
+        [{"heading": "...", "summary": "", "links": [], "bv": ...}]
+    """
+    sections: List[Dict[str, Any]] = []
+    # 匹配 "数字、" 或 "数字." 或 "数字、" 开头的行
+    num_pattern = re.compile(r'^\d{1,3}[、.．]\s*(.+)')
+
+    for line in text.split("\n"):
+        line = line.strip()
+        if not line:
+            continue
+        m = num_pattern.match(line)
+        if m:
+            heading = m.group(1).strip()
+            if heading:
+                sections.append({
+                    "heading": heading,
+                    "summary": "",
+                    "links": [],
+                    "bv": bv_id,
+                    "wx_url": "",
+                })
+
+    return sections
+
+
 # ──────────────────────────────────────────────
 # 主入口：收集UP主最新内容
 # ──────────────────────────────────────────────
@@ -444,6 +571,7 @@ def collect_bilibili_up_content(
     max_items: int = 1,
     timeout: int = 30,
     uid: Optional[int] = None,
+    use_pinned_comment: bool = False,
 ) -> Dict[str, Any]:
     """
     抓取指定B站UP主的最新视频文案。
@@ -454,6 +582,7 @@ def collect_bilibili_up_content(
         max_items: 最多处理几个视频
         timeout: 超时时间
         uid: UP主 UID（推荐，直接获取视频列表更可靠）
+        use_pinned_comment: 是否从评论区置顶获取内容（适用于"一觉醒来发生啥"等UP主）
 
     Returns:
         {
@@ -499,9 +628,22 @@ def collect_bilibili_up_content(
                 except RuntimeError:
                     article_text = ""
 
-            # 解析段落：优先用文章全文，回退到视频描述时间戳
+            # 如果开启了评论区置顶模式，优先从置顶评论获取内容
+            pinned_text = ""
+            if use_pinned_comment:
+                try:
+                    pinned_text = get_pinned_comment(bv_id, uid=uid) or ""
+                except Exception:
+                    pinned_text = ""
+
+            # 解析段落：优先用评论区置顶 > 文章全文 > 视频描述时间戳
             sections = []
-            if article_text and not _is_captcha_page(article_text):
+            if pinned_text and not _is_captcha_page(pinned_text):
+                sections = parse_article_sections(pinned_text, bv_id, wx_url or "")
+                # 评论区内容通常是编号列表格式，不是markdown标题
+                if not sections:
+                    sections = parse_numbered_list(pinned_text, bv_id)
+            if not sections and article_text and not _is_captcha_page(article_text):
                 sections = parse_article_sections(article_text, bv_id, wx_url or "")
 
             # 如果文章解析不到有效内容（如被 CAPTCHA 拦截），用视频描述的时间戳

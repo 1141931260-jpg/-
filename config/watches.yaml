@@ -30,7 +30,7 @@ watch:
       query: "DeepSeek"
       type: "topic_news"
       mode: "topic_news"
-      enabled: true
+      enabled: false
       max_items: 10
       time_window_hours: 24
       source_policy: "official_only"
@@ -53,7 +53,7 @@ watch:
       title: "GitHub 今日热门项目"
       type: "github_projects"
       mode: "github_projects"
-      enabled: true
+      enabled: false
       max_items: 5
       time_window_hours: 24
       backend_options:
@@ -64,7 +64,7 @@ watch:
       title: "GitHub 近24小时高星新项目"
       type: "github_projects"
       mode: "github_projects"
-      enabled: true
+      enabled: false
       max_items: 5
       time_window_hours: 24
       backend_options:
@@ -75,7 +75,7 @@ watch:
       query: "中国 网络安全 数据安全 个人信息保护 法律 法规"
       type: "topic_news"
       mode: "topic_news"
-      enabled: true
+      enabled: false
       max_items: 10
       time_window_hours: 24
       source_policy: "official_media_community"
@@ -99,7 +99,7 @@ watch:
       query: "重大 安全生产 事故"
       type: "topic_news"
       mode: "topic_news"
-      enabled: true
+      enabled: false
       max_items: 10
       time_window_hours: 168
       source_policy: "official_media_community"
@@ -197,3 +197,17 @@ watch:
       backend_options:
         title_filter: "早报"
         uid: 285286947
+
+    # 一觉醒来发生啥 - 评论区置顶模式
+    - id: "yijuelai-fashengsha"
+      title: "一觉醒来发生啥"
+      query: "一觉醒来发生啥"
+      type: "bilibili_up"
+      mode: "bilibili_up"
+      enabled: true
+      max_items: 1
+      time_window_hours: 24
+      push_policy: "report_no_change"
+      backend_options:
+        uid: 3546606469123022
+        use_pinned_comment: true

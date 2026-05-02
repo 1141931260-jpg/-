@@ -384,6 +384,7 @@ class WatchService:
         search_query = item.query or item.title
         title_filter = item.backend_options.get("title_filter", "")
         uid = item.backend_options.get("uid")
+        use_pinned_comment = item.backend_options.get("use_pinned_comment", False)
         max_items = item.max_items
 
         aggregation = collect_bilibili_up_content(
@@ -392,6 +393,7 @@ class WatchService:
             max_items=max_items,
             timeout=self.timeout,
             uid=int(uid) if uid else None,
+            use_pinned_comment=bool(use_pinned_comment),
         )
         raw_items = aggregation["items"]
         errors = aggregation["errors"]
@@ -414,8 +416,8 @@ class WatchService:
                 flat_items.append({
                     "title": f"{sec['heading']}",
                     "url": sec.get("links", [wx_url or video_url])[0] if sec.get("links") else (wx_url or video_url),
-                    "source_name": "bilibili_up",
-                    "time_display": raw.get("upload_date", ""),
+                    "source_name": "",
+                    "time_display": "",
                 })
 
         watch_state["last_snapshot"] = {
