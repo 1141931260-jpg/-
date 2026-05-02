@@ -6,6 +6,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
+from .bilibili_up import collect_bilibili_up_content
 from .changedetection import ChangedetectionClient
 from .detectors import detect_feed_update, detect_generic_change, detect_price
 from .fetcher import extract_domain, fetch_page
@@ -378,6 +379,76 @@ class WatchService:
             "errors": aggregation["errors"],
         }
 
+    def _run_bilibili_up_watch(self, item: WatchItem, watch_state: Dict[str, Any]) -> Dict[str, Any]:
+        """B站UP主监控：抓取最新视频文案。"""
+        search_query = item.query or item.title
+        title_filter = item.backend_options.get("title_filter", "")
+        max_items = item.max_items
+
+        aggregation = collect_bilibili_up_content(
+            search_query=search_query,
+            title_filter=title_filter or None,
+            max_items=max_items,
+            timeout=self.timeout,
+        )
+        raw_items = aggregation["items"]
+        errors = aggregation["errors"]
+
+        # 检查是否有新内容（与上次对比 bv_id）
+        last_bv_ids = watch_state.get("last_bv_ids", [])
+        current_bv_ids = [it["bv_id"] for it in raw_items]
+        changed = current_bv_ids != last_bv_ids and bool(raw_items)
+
+        if changed:
+            watch_state["last_bv_ids"] = current_bv_ids
+            watch_state["last_change_at"] = datetime.now().isoformat()
+
+        # 将 sections 展平为 formatter 可用的 items 格式
+        flat_items = []
+        for raw in raw_items:
+            video_url = raw.get("video_url", "")
+            wx_url = raw.get("wx_url", "")
+            for sec in raw.get("sections", []):
+                flat_items.append({
+                    "title": f"{sec['heading']}",
+                    "url": sec.get("links", [wx_url or video_url])[0] if sec.get("links") else (wx_url or video_url),
+                    "source_name": "bilibili_up",
+                    "time_display": raw.get("upload_date", ""),
+                })
+
+        watch_state["last_snapshot"] = {
+            "mode": "bilibili_up",
+            "count": len(raw_items),
+            "section_count": len(flat_items),
+            "items": [
+                {
+                    "title": it["title"],
+                    "bv_id": it["bv_id"],
+                    "section_count": it.get("section_count", 0),
+                }
+                for it in raw_items
+            ],
+        }
+
+        message = f"找到 {len(raw_items)} 个视频、{len(flat_items)} 条新闻" if raw_items else "没有找到新视频"
+        if errors:
+            message += f"（{len(errors)} 个错误）"
+
+        return {
+            "watch_id": item.id,
+            "title": item.title,
+            "watch_type": "bilibili_up",
+            "status": "ok",
+            "message": message,
+            "url": raw_items[0]["video_url"] if raw_items else "",
+            "changed": changed,
+            "should_push": changed or item.push_policy == "report_no_change",
+            "source_name": "bilibili_up",
+            "time_display": datetime.now().strftime("%H:%M"),
+            "items": flat_items,
+            "errors": errors,
+        }
+
     def _run_direct_watch(self, item: WatchItem, watch_state: Dict[str, Any]) -> Dict[str, Any]:
         sources = self._resolve_sources(item, watch_state)
         if not sources:
@@ -435,6 +506,8 @@ class WatchService:
                     result = self._run_github_feed_watch(item, watch_state)
                 elif item.mode == "github_projects" or item.watch_type == "github_projects":
                     result = self._run_github_projects_watch(item, watch_state)
+                elif item.mode == "bilibili_up" or item.watch_type == "bilibili_up":
+                    result = self._run_bilibili_up_watch(item, watch_state)
                 elif item.backend == "changedetection":
                     result = self._run_changedetection_watch(item, watch_state)
                 else:
