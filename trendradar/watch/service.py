@@ -432,7 +432,8 @@ class WatchService:
 
         message = f"找到 {len(raw_items)} 个视频、{len(flat_items)} 条新闻" if raw_items else "没有找到新视频"
         if errors:
-            message += f"（{len(errors)} 个错误）"
+            error_detail = errors[0] if len(errors) == 1 else "; ".join(errors)
+            message += f"（{error_detail}）"
 
         return {
             "watch_id": item.id,

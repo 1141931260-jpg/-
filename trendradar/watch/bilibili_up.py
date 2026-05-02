@@ -17,6 +17,7 @@ from __future__ import annotations
 import json
 import re
 import subprocess
+import time
 from typing import Any, Dict, List, Optional
 
 import requests
@@ -30,45 +31,113 @@ def search_uploader_videos(
     query: str,
     count: int = 5,
     timeout: int = 30,
+    retries: int = 2,
 ) -> List[Dict[str, str]]:
     """
-    通过 bili-cli 搜索视频。
+    搜索B站视频。优先用 bilibili-api-python（自带 wbi 签名），回退到 bili-cli。
 
     Args:
         query: 搜索关键词（如 "橘鸦Juya AI早报"）
         count: 返回结果数量
+        timeout: 超时时间
+        retries: 重试次数
 
     Returns:
         [{"bv": "BVxxx", "title": "...", "uploader": "..."}]
     """
-    try:
-        result = subprocess.run(
-            ["bili", "search", query, "--type", "video", "-n", str(count), "--json"],
-            capture_output=True, timeout=timeout,
-            encoding="utf-8", errors="replace",
+    # 方案1: bilibili-api-python（可靠，自带 wbi 签名）
+    for attempt in range(retries + 1):
+        try:
+            videos = _search_bilibili_api(query, count, timeout)
+            if videos:
+                return videos
+        except Exception:
+            if attempt < retries:
+                time.sleep(2)
+                continue
+            # 记录最后错误，继续尝试方案2
+            break
+
+    # 方案2: bili-cli 子进程（回退）
+    last_error = ""
+    for attempt in range(retries + 1):
+        try:
+            result = subprocess.run(
+                ["bili", "search", query, "--type", "video", "-n", str(count), "--json"],
+                capture_output=True, timeout=timeout,
+                encoding="utf-8", errors="replace",
+            )
+            output = (result.stdout or "").strip()
+            stderr = (result.stderr or "").strip()
+
+            if not output and stderr:
+                last_error = f"bili-cli stderr: {stderr[:200]}"
+                if attempt < retries:
+                    time.sleep(2)
+                    continue
+            elif not output and result.returncode != 0:
+                last_error = f"bili-cli 退出码 {result.returncode}"
+                if attempt < retries:
+                    time.sleep(2)
+                    continue
+
+            if output:
+                try:
+                    data = json.loads(output)
+                    videos_list: List[Dict[str, str]] = []
+                    items = data if isinstance(data, list) else data.get("data", [])
+                    for entry in items:
+                        videos_list.append({
+                            "bv": entry.get("bvid") or entry.get("id", ""),
+                            "title": entry.get("title", ""),
+                            "uploader": entry.get("author") or entry.get("uploader", ""),
+                        })
+                    if videos_list:
+                        return videos_list
+                except json.JSONDecodeError:
+                    parsed = _parse_bili_yaml(output)
+                    if parsed:
+                        return parsed
+                    last_error = "bili-cli 输出解析失败"
+            else:
+                last_error = "bili-cli 无输出"
+
+        except FileNotFoundError:
+            last_error = "bili-cli 未安装"
+            break
+        except subprocess.TimeoutExpired:
+            last_error = f"bili-cli 搜索超时 ({timeout}s)"
+            if attempt < retries:
+                time.sleep(2)
+                continue
+
+    raise RuntimeError(f"搜索失败: {last_error}")
+
+
+def _search_bilibili_api(query: str, count: int = 5, timeout: int = 30) -> List[Dict[str, str]]:
+    """通过 bilibili-api-python 搜索视频（自带 wbi 签名，不会被 412）。"""
+    import asyncio
+    from bilibili_api import search as bili_search
+
+    async def _do_search():
+        result = await bili_search.search_by_type(
+            query,
+            search_type=bili_search.SearchObjectType.VIDEO,
+            page=1,
         )
-        output = (result.stdout or "").strip()
-    except FileNotFoundError:
-        raise RuntimeError("bili-cli 未安装，请运行: pip install bilibili-cli")
-    except subprocess.TimeoutExpired:
-        raise RuntimeError("bili-cli 搜索超时")
+        return result.get("result", []) or []
 
-    if not output:
-        return []
-
-    try:
-        data = json.loads(output)
-    except json.JSONDecodeError:
-        # 回退：尝试 YAML 格式（bili-cli 默认输出）
-        return _parse_bili_yaml(output)
-
+    entries = asyncio.run(_do_search())
     videos: List[Dict[str, str]] = []
-    items = data if isinstance(data, list) else data.get("data", [])
-    for entry in items:
+    for entry in entries[:count]:
+        bv = entry.get("bvid", "")
+        if not bv:
+            continue
+        title = re.sub(r"<[^>]+>", "", entry.get("title", ""))
         videos.append({
-            "bv": entry.get("bvid") or entry.get("id", ""),
-            "title": entry.get("title", ""),
-            "uploader": entry.get("author") or entry.get("uploader", ""),
+            "bv": bv,
+            "title": title,
+            "uploader": entry.get("author", ""),
         })
     return videos
 
@@ -100,30 +169,56 @@ def _parse_bili_yaml(output: str) -> List[Dict[str, str]]:
 # 视频元数据
 # ──────────────────────────────────────────────
 
-def get_video_info(bv_id: str, timeout: int = 30) -> Dict[str, Any]:
+def get_video_info(bv_id: str, timeout: int = 30, retries: int = 2) -> Dict[str, Any]:
     """
-    通过 yt-dlp 获取视频元数据。
+    通过 yt-dlp 获取视频元数据，带重试。
 
     Returns:
         {"title": "...", "description": "...", "upload_date": "...", "uploader": "..."}
     """
     url = f"https://www.bilibili.com/video/{bv_id}"
-    try:
-        result = subprocess.run(
-            ["yt-dlp", "--dump-json", "--skip-download", url],
-            capture_output=True, timeout=timeout,
-            encoding="utf-8", errors="replace",
-        )
-        data = json.loads(result.stdout)
-        return {
-            "title": data.get("title", ""),
-            "description": data.get("description", ""),
-            "upload_date": data.get("upload_date", ""),
-            "uploader": data.get("uploader", ""),
-            "webpage_url": data.get("webpage_url", url),
-        }
-    except Exception as e:
-        raise RuntimeError(f"yt-dlp 获取视频信息失败: {e}")
+    last_error = ""
+    for attempt in range(retries + 1):
+        try:
+            result = subprocess.run(
+                ["yt-dlp", "--dump-json", "--skip-download", url],
+                capture_output=True, timeout=timeout,
+                encoding="utf-8", errors="replace",
+            )
+            if not result.stdout.strip():
+                stderr = (result.stderr or "").strip()
+                last_error = f"yt-dlp 无输出, stderr: {stderr[:200]}"
+                if attempt < retries:
+                    time.sleep(2)
+                    continue
+                raise RuntimeError(last_error)
+            data = json.loads(result.stdout)
+            return {
+                "title": data.get("title", ""),
+                "description": data.get("description", ""),
+                "upload_date": data.get("upload_date", ""),
+                "uploader": data.get("uploader", ""),
+                "webpage_url": data.get("webpage_url", url),
+            }
+        except json.JSONDecodeError as e:
+            last_error = f"yt-dlp JSON 解析失败: {e}"
+            if attempt < retries:
+                time.sleep(2)
+                continue
+        except subprocess.TimeoutExpired:
+            last_error = f"yt-dlp 超时 ({timeout}s)"
+            if attempt < retries:
+                time.sleep(2)
+                continue
+        except RuntimeError:
+            raise
+        except Exception as e:
+            last_error = f"yt-dlp 异常: {e}"
+            if attempt < retries:
+                time.sleep(2)
+                continue
+
+    raise RuntimeError(f"yt-dlp 获取视频信息失败: {last_error}")
 
 
 def extract_wechat_url(description: str) -> Optional[str]:
