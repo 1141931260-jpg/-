@@ -239,49 +239,42 @@
     "china-security-law-topic": {
       "title": "中国安全领域最新法律法规",
       "watch_type": "topic_news",
-      "updated_at": "2026-05-01T23:09:25.396160",
+      "updated_at": "2026-05-02T17:21:44.165604",
       "last_snapshot": {
         "mode": "topic_news",
-        "count": 1,
-        "items": [
-          {
-            "title": "个人信息保护政策法规问答（2026年4月）",
-            "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE1IS29Jb19Qd2huMGRYdmZGYzdQSVNXcFpjOXJ5MmRSWlh5M0Ztamp0RDd2a1hhdWt0OWlGZHczd0NfWGtuUjRzNnFDeGVUR19ya2RtM2swX20?oc=5",
-            "source_name": "河南网信办",
-            "published_at": "2026-04-30T21:00:50+00:00"
-          }
-        ]
+        "count": 0,
+        "items": []
       },
       "last_change_at": "2026-05-01T23:09:28.312284"
     },
     "major-safety-incident-topic": {
       "title": "重大安全生产事故",
       "watch_type": "topic_news",
-      "updated_at": "2026-05-01T23:09:28.312284",
+      "updated_at": "2026-05-02T17:21:47.945709",
       "last_snapshot": {
         "mode": "topic_news",
         "count": 2,
         "items": [
           {
+            "title": "较大生产安全事故查处挂牌督办通知书〔2026〕4号",
+            "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxQYlpYSFRrWFhXRUEwN0kyVlQwamlON1loTy1DNkM2bkU1cmJ4cjkzdjM3YUR0X2Z4ZXF1WE5SWjhXUE40YVZjQzU4RTVGUTdyaGtsSmQtSTRWYnJYNjlfalM3QXhKZWxwUHNmY3dPVUdTRHVPbk1rSlp2Y25rX0k4bnNGTXFkdXMzQ2lJc1lqWGp3ci1GdmRZYw?oc=5",
+            "source_name": "辽宁省应急管理厅",
+            "published_at": "2026-05-01T14:13:54+00:00"
+          },
+          {
             "title": "新田县新电东晖混凝土制品有限责任公司“3·9”一般生产安全事故调查报告",
             "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTFBGQ3U0MXlSekoxY2J2YlZxWWxrZVh5S2Y4ckNhbkszMTNUbm9rem92ZDhiTUtzR0Z1X2ZDS3hGai1zblc0RVNNQW50eG0xWmJDeDFWdnVmcjZHSmdHZWNYQzd0bnh2QUw3aXhKZi1Icnd3Z2FRTzVFNkpvaw?oc=5",
             "source_name": "xt.gov.cn",
             "published_at": "2026-04-27T07:00:00+00:00"
-          },
-          {
-            "title": "生产安全事故",
-            "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE9fSDJ4dFNhMDFmM21URS16MzdLS2dpSVIyb254MVdPLUNLQzRMajV1Q2JNdkpJcDBjZ2Frd0NuWGVTX1RQNWsxWlFZV0l2MXVVTS05NjFmVTJZdHc0bUZ3Yw?oc=5",
-            "source_name": "东莞市人民政府",
-            "published_at": "2026-04-25T08:02:40+00:00"
           }
         ]
       },
-      "last_change_at": "2026-05-01T23:09:32.230521"
+      "last_change_at": "2026-05-02T17:21:53.640465"
     },
     "deepseek-official": {
       "title": "DeepSeek 官方更新",
       "watch_type": "topic_news",
-      "updated_at": "2026-05-01T23:09:22.272033",
+      "updated_at": "2026-05-02T17:21:40.389893",
       "last_snapshot": {
         "mode": "topic_news",
         "count": 0,
@@ -303,78 +296,99 @@
     "github-trending-projects": {
       "title": "GitHub 今日热门项目",
       "watch_type": "github_projects",
-      "updated_at": "2026-05-01T23:09:23.237465",
+      "updated_at": "2026-05-02T17:21:41.294116",
       "last_snapshot": {
         "mode": "github_projects",
         "category": "trending",
         "count": 5,
         "items": [
           {
+            "title": "TauricResearch/TradingAgents｜量化交易",
+            "url": "https://github.com/TauricResearch/TradingAgents",
+            "published_at": ""
+          },
+          {
+            "title": "soxoj/maigret｜命令行工具",
+            "url": "https://github.com/soxoj/maigret",
+            "published_at": ""
+          },
+          {
             "title": "warpdotdev/warp｜智能体框架",
             "url": "https://github.com/warpdotdev/warp",
             "published_at": ""
           },
           {
-            "title": "TauricResearch/TradingAgents｜量化交易",
-            "url": "https://github.com/TauricResearch/TradingAgents",
+            "title": "1jehuang/jcode｜智能体框架",
+            "url": "https://github.com/1jehuang/jcode",
             "published_at": ""
           },
           {
             "title": "mattpocock/skills｜智能体框架",
             "url": "https://github.com/mattpocock/skills",
             "published_at": ""
-          },
-          {
-            "title": "obra/superpowers｜智能体框架",
-            "url": "https://github.com/obra/superpowers",
-            "published_at": ""
-          },
-          {
-            "title": "lukilabs/craft-agents-oss｜量化交易",
-            "url": "https://github.com/lukilabs/craft-agents-oss",
-            "published_at": ""
           }
         ]
       },
-      "last_change_at": "2026-05-01T23:09:24.436583"
+      "last_change_at": "2026-05-02T17:21:42.400641"
     },
     "github-rising-projects": {
       "title": "GitHub 近24小时高星新项目",
       "watch_type": "github_projects",
-      "updated_at": "2026-05-01T23:09:24.436583",
+      "updated_at": "2026-05-02T17:21:42.400641",
       "last_snapshot": {
         "mode": "github_projects",
         "category": "rising",
         "count": 5,
         "items": [
           {
-            "title": "darrylmorley/whatcable | 星标 365｜线缆识别",
-            "url": "https://github.com/darrylmorley/whatcable",
-            "published_at": "2026-05-01T07:45:10+00:00"
+            "title": "CloakdDev/solana-go | 星标 42｜开源项目",
+            "url": "https://github.com/CloakdDev/solana-go",
+            "published_at": "2026-05-02T04:37:49+00:00"
           },
           {
-            "title": "mattpocock/dictionary-of-ai-coding | 星标 311｜AI编程工具",
-            "url": "https://github.com/mattpocock/dictionary-of-ai-coding",
-            "published_at": "2026-05-01T10:17:05+00:00"
+            "title": "CloakdDev/sol_buddy | 星标 31｜开源项目",
+            "url": "https://github.com/CloakdDev/sol_buddy",
+            "published_at": "2026-05-02T04:37:59+00:00"
           },
           {
-            "title": "TQ-trade/rari-stable-pool-contracts | 星标 98｜量化交易",
-            "url": "https://github.com/TQ-trade/rari-stable-pool-contracts",
-            "published_at": "2026-05-01T06:43:26+00:00"
+            "title": "CloakdDev/raydium-frontend | 星标 21｜开源项目",
+            "url": "https://github.com/CloakdDev/raydium-frontend",
+            "published_at": "2026-05-02T04:38:08+00:00"
           },
           {
-            "title": "TQ-trade/defidollar-core | 星标 97｜量化交易",
-            "url": "https://github.com/TQ-trade/defidollar-core",
-            "published_at": "2026-05-01T06:43:35+00:00"
+            "title": "Aestheticsuraj234/chaicode-mobiledev-2026 | 星标 12｜开源项目",
+            "url": "https://github.com/Aestheticsuraj234/chaicode-mobiledev-2026",
+            "published_at": "2026-05-02T07:58:07+00:00"
           },
           {
-            "title": "warpdot-dev/composio | 星标 94｜智能体框架",
-            "url": "https://github.com/warpdot-dev/composio",
-            "published_at": "2026-05-01T07:19:17+00:00"
+            "title": "mrdrvt99/YouProEXTRA | 星标 9｜界面设计",
+            "url": "https://github.com/mrdrvt99/YouProEXTRA",
+            "published_at": "2026-05-02T00:54:02+00:00"
           }
         ]
       },
-      "last_change_at": "2026-05-01T23:09:25.396160"
+      "last_change_at": "2026-05-02T17:21:44.165604"
+    },
+    "juya-ai-briefing": {
+      "title": "橘鸦Juya AI早报",
+      "watch_type": "bilibili_up",
+      "updated_at": "2026-05-02T17:21:53.640465",
+      "last_bv_ids": [
+        "BV13RRKBGEtC"
+      ],
+      "last_change_at": "2026-05-02T17:22:04.081702",
+      "last_snapshot": {
+        "mode": "bilibili_up",
+        "count": 1,
+        "section_count": 1,
+        "items": [
+          {
+            "title": "OpenAI 发布 Codex 重大更新；xAI 上线 Grok 4.3 API【AI 早报 2026-05-01】",
+            "bv_id": "BV13RRKBGEtC",
+            "section_count": 1
+          }
+        ]
+      }
     }
   }
 }
