@@ -239,7 +239,7 @@
     "china-security-law-topic": {
       "title": "中国安全领域最新法律法规",
       "watch_type": "topic_news",
-      "updated_at": "2026-05-02T17:21:44.165604",
+      "updated_at": "2026-05-02T17:27:31.400544",
       "last_snapshot": {
         "mode": "topic_news",
         "count": 0,
@@ -250,16 +250,22 @@
     "major-safety-incident-topic": {
       "title": "重大安全生产事故",
       "watch_type": "topic_news",
-      "updated_at": "2026-05-02T17:21:47.945709",
+      "updated_at": "2026-05-02T17:27:34.984984",
       "last_snapshot": {
         "mode": "topic_news",
-        "count": 2,
+        "count": 3,
         "items": [
           {
             "title": "较大生产安全事故查处挂牌督办通知书〔2026〕4号",
             "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxQYlpYSFRrWFhXRUEwN0kyVlQwamlON1loTy1DNkM2bkU1cmJ4cjkzdjM3YUR0X2Z4ZXF1WE5SWjhXUE40YVZjQzU4RTVGUTdyaGtsSmQtSTRWYnJYNjlfalM3QXhKZWxwUHNmY3dPVUdTRHVPbk1rSlp2Y25rX0k4bnNGTXFkdXMzQ2lJc1lqWGp3ci1GdmRZYw?oc=5",
             "source_name": "辽宁省应急管理厅",
             "published_at": "2026-05-01T14:13:54+00:00"
+          },
+          {
+            "title": "沈阳皇姑乾沣物业管理（沈阳）有限公司“10·5”一般高处坠落事故调查报告-安全生产事故信息",
+            "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPVWZUSlRsdGpHX1lQZVEtZjNNSUlkcmpyeXlWSWhoNzY3NktWaFBETlFaNkZXcjM1dGpuS19Dbm9SeUFNdkFoU3ZYUS1FV0NoUGo3MkVSMUcwWjBVd0NBQkkxVUdoRGlaWnFWZzZPSGZOZFZOb2FxTC1BeTBiQnRrMjI2OElkeXp0VTdyRlRCdnVwNFU?oc=5",
+            "source_name": "沈阳市应急管理局",
+            "published_at": "2026-04-29T07:00:00+00:00"
           },
           {
             "title": "新田县新电东晖混凝土制品有限责任公司“3·9”一般生产安全事故调查报告",
@@ -269,12 +275,12 @@
           }
         ]
       },
-      "last_change_at": "2026-05-02T17:21:53.640465"
+      "last_change_at": "2026-05-02T17:27:40.124812"
     },
     "deepseek-official": {
       "title": "DeepSeek 官方更新",
       "watch_type": "topic_news",
-      "updated_at": "2026-05-02T17:21:40.389893",
+      "updated_at": "2026-05-02T17:27:27.858620",
       "last_snapshot": {
         "mode": "topic_news",
         "count": 0,
@@ -296,7 +302,7 @@
     "github-trending-projects": {
       "title": "GitHub 今日热门项目",
       "watch_type": "github_projects",
-      "updated_at": "2026-05-02T17:21:41.294116",
+      "updated_at": "2026-05-02T17:27:28.726500",
       "last_snapshot": {
         "mode": "github_projects",
         "category": "trending",
@@ -329,12 +335,12 @@
           }
         ]
       },
-      "last_change_at": "2026-05-02T17:21:42.400641"
+      "last_change_at": "2026-05-02T17:27:29.817832"
     },
     "github-rising-projects": {
       "title": "GitHub 近24小时高星新项目",
       "watch_type": "github_projects",
-      "updated_at": "2026-05-02T17:21:42.400641",
+      "updated_at": "2026-05-02T17:27:29.817832",
       "last_snapshot": {
         "mode": "github_projects",
         "category": "rising",
@@ -367,25 +373,25 @@
           }
         ]
       },
-      "last_change_at": "2026-05-02T17:21:44.165604"
+      "last_change_at": "2026-05-02T17:27:31.400544"
     },
     "juya-ai-briefing": {
       "title": "橘鸦Juya AI早报",
       "watch_type": "bilibili_up",
-      "updated_at": "2026-05-02T17:21:53.640465",
+      "updated_at": "2026-05-02T17:27:40.124812",
       "last_bv_ids": [
-        "BV13RRKBGEtC"
+        "BV1m7RLBtE4f"
       ],
-      "last_change_at": "2026-05-02T17:22:04.081702",
+      "last_change_at": "2026-05-02T17:27:51.301448",
       "last_snapshot": {
         "mode": "bilibili_up",
         "count": 1,
-        "section_count": 1,
+        "section_count": 12,
         "items": [
           {
-            "title": "OpenAI 发布 Codex 重大更新；xAI 上线 Grok 4.3 API【AI 早报 2026-05-01】",
-            "bv_id": "BV13RRKBGEtC",
-            "section_count": 1
+            "title": "OpenAI Codex 新增导入其他Agent配置功能和宠物功能【AI 早报 2026-05-02】",
+            "bv_id": "BV1m7RLBtE4f",
+            "section_count": 12
           }
         ]
       }

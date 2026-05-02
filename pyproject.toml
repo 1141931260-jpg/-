@@ -14,6 +14,8 @@ dependencies = [
     "litellm==1.82.6",
     "json-repair==0.58.6",
     "tenacity==8.5.0",
+    "bilibili-cli>=0.6.2",
+    "yt-dlp>=2026.3.17",
 ]
 
 [project.scripts]
