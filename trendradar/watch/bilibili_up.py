@@ -32,20 +32,35 @@ def search_uploader_videos(
     count: int = 5,
     timeout: int = 30,
     retries: int = 2,
+    uid: Optional[int] = None,
 ) -> List[Dict[str, str]]:
     """
-    搜索B站视频。优先用 bilibili-api-python（自带 wbi 签名），回退到 bili-cli。
+    搜索B站视频。优先用 UID 直接获取视频列表，回退到搜索。
 
     Args:
         query: 搜索关键词（如 "橘鸦Juya AI早报"）
         count: 返回结果数量
         timeout: 超时时间
         retries: 重试次数
+        uid: UP主 UID，如果提供则直接获取视频列表（更可靠）
 
     Returns:
         [{"bv": "BVxxx", "title": "...", "uploader": "..."}]
     """
-    # 方案1: bilibili-api-python（可靠，自带 wbi 签名）
+    # 方案1: 通过 UID 直接获取 UP 主视频列表（最可靠，按时间排序）
+    if uid:
+        for attempt in range(retries + 1):
+            try:
+                videos = _get_user_videos(uid, count)
+                if videos:
+                    return videos
+            except Exception:
+                if attempt < retries:
+                    time.sleep(2)
+                    continue
+                break
+
+    # 方案2: bilibili-api-python 搜索
     for attempt in range(retries + 1):
         try:
             videos = _search_bilibili_api(query, count, timeout)
@@ -55,10 +70,9 @@ def search_uploader_videos(
             if attempt < retries:
                 time.sleep(2)
                 continue
-            # 记录最后错误，继续尝试方案2
             break
 
-    # 方案2: bili-cli 子进程（回退）
+    # 方案3: bili-cli 子进程（回退）
     last_error = ""
     for attempt in range(retries + 1):
         try:
@@ -114,6 +128,30 @@ def search_uploader_videos(
     raise RuntimeError(f"搜索失败: {last_error}")
 
 
+def _get_user_videos(uid: int, count: int = 5) -> List[Dict[str, str]]:
+    """通过 UID 直接获取 UP 主最新视频列表（最可靠）。"""
+    import asyncio
+    from bilibili_api import user as bili_user
+
+    async def _do_get():
+        u = bili_user.User(uid=uid)
+        result = await u.get_videos(pn=1, ps=count)
+        return result.get("list", {}).get("vlist", []) or []
+
+    vlist = asyncio.run(_do_get())
+    videos: List[Dict[str, str]] = []
+    for v in vlist[:count]:
+        bv = v.get("bvid", "")
+        if not bv:
+            continue
+        videos.append({
+            "bv": bv,
+            "title": v.get("title", ""),
+            "uploader": v.get("author", ""),
+        })
+    return videos
+
+
 def _search_bilibili_api(query: str, count: int = 5, timeout: int = 30) -> List[Dict[str, str]]:
     """通过 bilibili-api-python 搜索视频（自带 wbi 签名，不会被 412）。"""
     import asyncio
@@ -124,6 +162,7 @@ def _search_bilibili_api(query: str, count: int = 5, timeout: int = 30) -> List[
             query,
             search_type=bili_search.SearchObjectType.VIDEO,
             page=1,
+            order_type=bili_search.OrderVideo.PUBDATE,  # 按发布时间排序，优先取最新
         )
         return result.get("result", []) or []
 
@@ -171,11 +210,24 @@ def _parse_bili_yaml(output: str) -> List[Dict[str, str]]:
 
 def get_video_info(bv_id: str, timeout: int = 30, retries: int = 2) -> Dict[str, Any]:
     """
-    通过 yt-dlp 获取视频元数据，带重试。
+    获取视频元数据。优先用 bilibili-api-python，回退到 yt-dlp。
 
     Returns:
         {"title": "...", "description": "...", "upload_date": "...", "uploader": "..."}
     """
+    # 方案1: bilibili-api-python（可靠，不会被 412）
+    for attempt in range(retries + 1):
+        try:
+            info = _get_video_info_api(bv_id)
+            if info:
+                return info
+        except Exception:
+            if attempt < retries:
+                time.sleep(2)
+                continue
+            break
+
+    # 方案2: yt-dlp 子进程（回退）
     url = f"https://www.bilibili.com/video/{bv_id}"
     last_error = ""
     for attempt in range(retries + 1):
@@ -219,6 +271,33 @@ def get_video_info(bv_id: str, timeout: int = 30, retries: int = 2) -> Dict[str,
                 continue
 
     raise RuntimeError(f"yt-dlp 获取视频信息失败: {last_error}")
+
+
+def _get_video_info_api(bv_id: str) -> Optional[Dict[str, Any]]:
+    """通过 bilibili-api-python 获取视频元数据。"""
+    import asyncio
+    from bilibili_api import video as bili_video
+    from datetime import datetime
+
+    async def _do_get():
+        v = bili_video.Video(bvid=bv_id)
+        return await v.get_info()
+
+    info = asyncio.run(_do_get())
+    if not info:
+        return None
+
+    # pubdate 是时间戳，转为 YYYYMMDD 格式
+    pubdate = info.get("pubdate", 0)
+    upload_date = datetime.fromtimestamp(pubdate).strftime("%Y%m%d") if pubdate else ""
+
+    return {
+        "title": info.get("title", ""),
+        "description": info.get("desc", ""),
+        "upload_date": upload_date,
+        "uploader": info.get("owner", {}).get("name", ""),
+        "webpage_url": f"https://www.bilibili.com/video/{bv_id}",
+    }
 
 
 def extract_wechat_url(description: str) -> Optional[str]:
@@ -364,6 +443,7 @@ def collect_bilibili_up_content(
     title_filter: Optional[str] = None,
     max_items: int = 1,
     timeout: int = 30,
+    uid: Optional[int] = None,
 ) -> Dict[str, Any]:
     """
     抓取指定B站UP主的最新视频文案。
@@ -373,6 +453,7 @@ def collect_bilibili_up_content(
         title_filter: 标题过滤关键词（如 "早报"），只保留匹配的视频
         max_items: 最多处理几个视频
         timeout: 超时时间
+        uid: UP主 UID（推荐，直接获取视频列表更可靠）
 
     Returns:
         {
@@ -385,7 +466,7 @@ def collect_bilibili_up_content(
 
     # 1. 搜索视频
     try:
-        videos = search_uploader_videos(search_query, count=max_items + 3, timeout=timeout)
+        videos = search_uploader_videos(search_query, count=max_items + 3, timeout=timeout, uid=uid)
     except RuntimeError as e:
         errors.append(str(e))
         return {"items": items, "errors": errors}

@@ -383,6 +383,7 @@ class WatchService:
         """B站UP主监控：抓取最新视频文案。"""
         search_query = item.query or item.title
         title_filter = item.backend_options.get("title_filter", "")
+        uid = item.backend_options.get("uid")
         max_items = item.max_items
 
         aggregation = collect_bilibili_up_content(
@@ -390,6 +391,7 @@ class WatchService:
             title_filter=title_filter or None,
             max_items=max_items,
             timeout=self.timeout,
+            uid=int(uid) if uid else None,
         )
         raw_items = aggregation["items"]
         errors = aggregation["errors"]

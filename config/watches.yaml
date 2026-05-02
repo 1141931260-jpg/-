@@ -183,8 +183,8 @@ watch:
     # ──────────────────────────────────────────────
     # B站UP主监控（Agent Reach 集成）
     # ──────────────────────────────────────────────
-    # 通过 bili-cli 搜索 + yt-dlp 获取视频信息 + Jina Reader 获取文章全文
-    # 需要安装: pip install bilibili-cli yt-dlp
+    # 通过 bilibili-api-python 直接获取UP主视频列表（最可靠）
+    # uid: UP主的B站 UID，直接获取视频列表比搜索更稳定
     - id: "juya-ai-briefing"
       title: "橘鸦Juya AI早报"
       query: "橘鸦Juya AI早报"
@@ -196,3 +196,4 @@ watch:
       push_policy: "report_no_change"
       backend_options:
         title_filter: "早报"
+        uid: 285286947
