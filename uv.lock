@@ -759,6 +759,44 @@ wheels = [
 ]
 
 [[package]]
+name = "geinews"
+version = "6.6.1"
+source = { editable = "." }
+dependencies = [
+    { name = "bilibili-cli" },
+    { name = "boto3" },
+    { name = "fastmcp" },
+    { name = "feedparser" },
+    { name = "json-repair" },
+    { name = "litellm" },
+    { name = "pytz" },
+    { name = "pyyaml" },
+    { name = "requests" },
+    { name = "tenacity" },
+    { name = "websockets" },
+    { name = "yt-dlp" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "bilibili-cli", specifier = ">=0.6.2" },
+    { name = "boto3", specifier = "==1.42.76" },
+    { name = "fastmcp", specifier = "==2.12.5" },
+    { name = "feedparser", specifier = "==6.0.12" },
+    { name = "json-repair", specifier = "==0.58.6" },
+    { name = "litellm", specifier = "==1.82.6" },
+    { name = "pytz", specifier = "==2026.1" },
+    { name = "pyyaml", specifier = "==6.0.3" },
+    { name = "requests", specifier = "==2.33.0" },
+    { name = "tenacity", specifier = "==8.5.0" },
+    { name = "websockets", specifier = "==13.1" },
+    { name = "yt-dlp", specifier = ">=2026.3.17" },
+]
+
+[package.metadata.requires-dev]
+dev = []
+
+[[package]]
 name = "h11"
 version = "0.16.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2392,44 +2430,6 @@ sdist = { url = "https://files.pythonhosted.org/packages/a8/4b/29b4ef32e036bb34e
 wheels = [
     { url = "https://files.pythonhosted.org/packages/d0/30/dc54f88dd4a2b5dc8a0279bdd7270e735851848b762aeb1c1184ed1f6b14/tqdm-4.67.1-py3-none-any.whl", hash = "sha256:26445eca388f82e72884e0d580d5464cd801a3ea01e63e5601bdff9ba6a48de2", size = 78540, upload-time = "2024-11-24T20:12:19.698Z" },
 ]
-
-[[package]]
-name = "trendradar"
-version = "6.6.1"
-source = { editable = "." }
-dependencies = [
-    { name = "bilibili-cli" },
-    { name = "boto3" },
-    { name = "fastmcp" },
-    { name = "feedparser" },
-    { name = "json-repair" },
-    { name = "litellm" },
-    { name = "pytz" },
-    { name = "pyyaml" },
-    { name = "requests" },
-    { name = "tenacity" },
-    { name = "websockets" },
-    { name = "yt-dlp" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "bilibili-cli", specifier = ">=0.6.2" },
-    { name = "boto3", specifier = "==1.42.76" },
-    { name = "fastmcp", specifier = "==2.12.5" },
-    { name = "feedparser", specifier = "==6.0.12" },
-    { name = "json-repair", specifier = "==0.58.6" },
-    { name = "litellm", specifier = "==1.82.6" },
-    { name = "pytz", specifier = "==2026.1" },
-    { name = "pyyaml", specifier = "==6.0.3" },
-    { name = "requests", specifier = "==2.33.0" },
-    { name = "tenacity", specifier = "==8.5.0" },
-    { name = "websockets", specifier = "==13.1" },
-    { name = "yt-dlp", specifier = ">=2026.3.17" },
-]
-
-[package.metadata.requires-dev]
-dev = []
 
 [[package]]
 name = "typer-slim"
