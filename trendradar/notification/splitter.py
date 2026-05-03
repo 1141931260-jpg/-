@@ -135,7 +135,7 @@ DEFAULT_REGION_ORDER = ["hotlist", "rss", "new_items", "standalone", "ai_analysi
 
 def _news_item_separator() -> str:
     """新闻条目之间的简洁分隔线。"""
-    return "\n--------------------\n\n"
+    return "\n-----------------------------\n\n"
 
 
 def split_content_into_batches(
