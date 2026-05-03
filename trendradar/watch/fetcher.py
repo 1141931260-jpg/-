@@ -47,7 +47,7 @@ def extract_domain(url: str) -> str:
 def fetch_page(
     url: str,
     timeout: int = 15,
-    user_agent: str = "TrendRadar Watch/1.0",
+    user_agent: str = "GEINEWS Watch/1.0",
     proxy_url: Optional[str] = None,
     extra_headers: Optional[Dict[str, str]] = None,
     cookies: Optional[Dict[str, str]] = None,

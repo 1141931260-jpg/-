@@ -3,7 +3,7 @@
 B站UP主监控模块
 
 通过 bili-cli + yt-dlp + Jina Reader 抓取指定UP主的最新视频文案。
-属于 Agent Reach 技能与 TrendRadar Watch 系统的集成。
+属于 Agent Reach 技能与 GEINEWS Watch 系统的集成。
 
 支持：
 - 按UP主名称搜索最新视频

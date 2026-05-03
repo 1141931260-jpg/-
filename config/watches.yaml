@@ -1,4 +1,4 @@
-# TrendRadar 关注项配置
+# GEINEWS 关注项配置
 watch:
   enabled: true
 
@@ -14,7 +14,7 @@ watch:
 
   fetch:
     timeout: 20
-    user_agent: "TrendRadar Watch/1.0"
+    user_agent: "GEINEWS Watch/1.0"
 
   changedetection:
     # 例如: "https://changedetection.example.com"

@@ -21,7 +21,7 @@ TAG_RE = re.compile(r"<[^>]+>")
 def search_candidates(
     query: str,
     max_candidates: int = 3,
-    user_agent: str = "TrendRadar Watch/1.0",
+    user_agent: str = "GEINEWS Watch/1.0",
     proxy_url: Optional[str] = None,
 ) -> List[Dict[str, str]]:
     proxies = None

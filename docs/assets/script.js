@@ -1,5 +1,5 @@
 /**
- * TrendRadar 配置文件编辑器核心逻辑
+ * GEINEWS 配置文件编辑器核心逻辑
  * 特点：确保原始 YAML 的注释和格式 100% 保留
  */
 
@@ -119,10 +119,10 @@ const STORAGE_KEY_FREQUENCY_TIME = 'trendradar_frequency_time';
 const STORAGE_KEY_TIMELINE_TIME = 'trendradar_timeline_time';
 
 // 官网配置文件 URL
-const REMOTE_CONFIG_URL = 'https://raw.githubusercontent.com/sansan0/TrendRadar/refs/heads/master/config/config.yaml';
-const REMOTE_FREQUENCY_URL = 'https://raw.githubusercontent.com/sansan0/TrendRadar/refs/heads/master/config/frequency_words.txt';
-const REMOTE_TIMELINE_URL = 'https://raw.githubusercontent.com/sansan0/TrendRadar/refs/heads/master/config/timeline.yaml';
-const REMOTE_VERSION_URL = 'https://raw.githubusercontent.com/sansan0/TrendRadar/refs/heads/master/version_configs';
+const REMOTE_CONFIG_URL = 'https://raw.githubusercontent.com/sansan0/GEINEWS/refs/heads/master/config/config.yaml';
+const REMOTE_FREQUENCY_URL = 'https://raw.githubusercontent.com/sansan0/GEINEWS/refs/heads/master/config/frequency_words.txt';
+const REMOTE_TIMELINE_URL = 'https://raw.githubusercontent.com/sansan0/GEINEWS/refs/heads/master/config/timeline.yaml';
+const REMOTE_VERSION_URL = 'https://raw.githubusercontent.com/sansan0/GEINEWS/refs/heads/master/version_configs';
 
 let currentYaml = "";
 let currentFrequency = "";
@@ -540,7 +540,7 @@ window.openLoadConfigModal = function() {
             </div>
             <div class="text-xs text-gray-400 mt-3 p-2 bg-gray-50 rounded">
                 <i class="fa-solid fa-info-circle mr-1"></i>
-                数据来源：<a href="https://github.com/sansan0/TrendRadar" target="_blank" class="text-blue-500 hover:underline">sansan0/TrendRadar</a>
+                数据来源：<a href="https://github.com/sansan0/GEINEWS" target="_blank" class="text-blue-500 hover:underline">sansan0/GEINEWS</a>
             </div>
             <div class="flex justify-end gap-2 mt-4">
                 <button onclick="closeLoadConfigModal()" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">取消</button>
@@ -848,7 +848,7 @@ function renderControls(mod) {
                         <button onclick="openPlatformModal()" class="text-xs bg-green-600 text-white px-3 py-1.5 rounded hover:bg-green-700 transition-colors">
                             <i class="fa-solid fa-plus mr-1"></i>添加平台
                         </button>
-                        <a href="https://github.com/sansan0/TrendRadar?tab=readme-ov-file#%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3" target="_blank" class="text-xs bg-gray-100 text-gray-600 px-3 py-1.5 rounded hover:bg-gray-200 transition-colors border border-gray-200 flex items-center gap-1 no-underline">
+                        <a href="https://github.com/sansan0/GEINEWS?tab=readme-ov-file#%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3" target="_blank" class="text-xs bg-gray-100 text-gray-600 px-3 py-1.5 rounded hover:bg-gray-200 transition-colors border border-gray-200 flex items-center gap-1 no-underline">
                             <i class="fa-solid fa-circle-question text-gray-400"></i>添加其它平台
                         </a>
                      </div>`;
@@ -1607,7 +1607,7 @@ function buildFrequencyText(data) {
 
     // 如果没有原始文本，使用默认模板
     let text = '# ═══════════════════════════════════════════════════════════════\n';
-    text += '#                    TrendRadar 频率词配置文件\n';
+    text += '#                    GEINEWS 频率词配置文件\n';
     text += '# ═══════════════════════════════════════════════════════════════\n\n';
 
     text += '[GLOBAL_FILTER]\n';

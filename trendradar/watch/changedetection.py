@@ -15,7 +15,7 @@ class ChangedetectionClient:
         base_url: str,
         api_key: str = "",
         timeout: int = 20,
-        user_agent: str = "TrendRadar Watch/1.0",
+        user_agent: str = "GEINEWS Watch/1.0",
         proxy_url: Optional[str] = None,
     ):
         if not base_url:

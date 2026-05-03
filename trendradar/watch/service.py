@@ -22,7 +22,7 @@ class WatchService:
         self.watch_config = config.get("WATCH", {})
         self.proxy_url = proxy_url
         self.timeout = int(self.watch_config.get("FETCH_TIMEOUT", 15))
-        self.user_agent = self.watch_config.get("USER_AGENT", "TrendRadar Watch/1.0")
+        self.user_agent = self.watch_config.get("USER_AGENT", "GEINEWS Watch/1.0")
         self.store = WatchStateStore(self.watch_config.get("STATE_FILE", "output/watch_state.json"))
         self.state = self.store.load()
         self.changedetection_config = self.watch_config.get("CHANGEDETECTION", {})

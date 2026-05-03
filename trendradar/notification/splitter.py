@@ -133,6 +133,11 @@ DEFAULT_BATCH_SIZES = {
 DEFAULT_REGION_ORDER = ["hotlist", "rss", "new_items", "standalone", "ai_analysis"]
 
 
+def _news_item_separator() -> str:
+    """新闻条目之间的简洁分隔线。"""
+    return "\n--------------------\n\n"
+
+
 def split_content_into_batches(
     report_data: Dict,
     format_type: str,
@@ -255,67 +260,36 @@ def split_content_into_batches(
         elif format_type == "telegram":
             ai_stats_line = f"AI 分析数： {news_display}{mode_suffix}\n"
 
-    # 构建统一的头部（总是显示总新闻数、时间和类型）
-    if not standalone_ai_only_mode:
-        if format_type in ("wework", "bark"):
-            base_header = f"**总新闻数：** {total_titles}\n"
-            base_header += ai_stats_line
-            base_header += f"**时间：** {now.strftime('%Y-%m-%d %H:%M:%S')}\n"
-            base_header += f"**类型：** {report_type}\n\n"
-        elif format_type == "telegram":
-            base_header = f"总新闻数： {total_titles}\n"
-            base_header += ai_stats_line
-            base_header += f"时间： {now.strftime('%Y-%m-%d %H:%M:%S')}\n"
-            base_header += f"类型： {report_type}\n\n"
-        elif format_type == "ntfy":
-            base_header = f"**总新闻数：** {total_titles}\n"
-            base_header += ai_stats_line
-            base_header += f"**时间：** {now.strftime('%Y-%m-%d %H:%M:%S')}\n"
-            base_header += f"**类型：** {report_type}\n\n"
-        elif format_type == "feishu":
-            base_header = f"**总新闻数：** {total_titles}\n"
-            base_header += ai_stats_line
-            base_header += f"**时间：** {now.strftime('%Y-%m-%d %H:%M:%S')}\n"
-            base_header += f"**类型：** {report_type}\n\n"
-            base_header += "---\n\n"
-        elif format_type == "dingtalk":
-            base_header = f"**总新闻数：** {total_titles}\n"
-            base_header += ai_stats_line
-            base_header += f"**时间：** {now.strftime('%Y-%m-%d %H:%M:%S')}\n"
-            base_header += f"**类型：** {report_type}\n\n"
-            base_header += "---\n\n"
-        elif format_type == "slack":
-            base_header = f"*总新闻数：* {total_titles}\n"
-            base_header += ai_stats_line
-            base_header += f"*时间：* {now.strftime('%Y-%m-%d %H:%M:%S')}\n"
-            base_header += f"*类型：* {report_type}\n\n"
+    # 推送正文直接从内容区开始，避免在顶部重复展示总数、时间和类型。
+    if not standalone_ai_only_mode and ai_stats_line:
+        base_header = f"{ai_stats_line}\n"
 
     base_footer = ""
     if not standalone_ai_only_mode:
         if format_type in ("wework", "bark"):
             base_footer = f"\n\n\n> 更新时间：{now.strftime('%Y-%m-%d %H:%M:%S')}"
             if update_info:
-                base_footer += f"\n> TrendRadar 发现新版本 **{update_info['remote_version']}**，当前 **{update_info['current_version']}**"
+                base_footer += f"\n> GEINEWS 发现新版本 **{update_info['remote_version']}**，当前 **{update_info['current_version']}**"
         elif format_type == "telegram":
             base_footer = f"\n\n更新时间：{now.strftime('%Y-%m-%d %H:%M:%S')}"
             if update_info:
-                base_footer += f"\nTrendRadar 发现新版本 {update_info['remote_version']}，当前 {update_info['current_version']}"
+                base_footer += f"\nGEINEWS 发现新版本 {update_info['remote_version']}，当前 {update_info['current_version']}"
         elif format_type == "ntfy":
             base_footer = f"\n\n> 更新时间：{now.strftime('%Y-%m-%d %H:%M:%S')}"
             if update_info:
-                base_footer += f"\n> TrendRadar 发现新版本 **{update_info['remote_version']}**，当前 **{update_info['current_version']}**"
+                base_footer += f"\n> GEINEWS 发现新版本 **{update_info['remote_version']}**，当前 **{update_info['current_version']}**"
         elif format_type == "feishu":
             base_footer = f"\n\n<font color='grey'>更新时间：{now.strftime('%Y-%m-%d %H:%M:%S')}</font>"
             if update_info:
-                base_footer += f"\n<font color='grey'>TrendRadar 发现新版本 {update_info['remote_version']}，当前 {update_info['current_version']}</font>"
+                base_footer += f"\n<font color='grey'>GEINEWS 发现新版本 {update_info['remote_version']}，当前 {update_info['current_version']}</font>"
         elif format_type == "dingtalk":
             base_footer = f"\n\n> 更新时间：{now.strftime('%Y-%m-%d %H:%M:%S')}"
             if update_info:
-                base_footer += f"\n> TrendRadar 发现新版本 **{update_info['remote_version']}**，当前 **{update_info['current_version']}**"
+                base_footer += f"\n> GEINEWS 发现新版本 **{update_info['remote_version']}**，当前 **{update_info['current_version']}**"
         elif format_type == "slack":
             base_footer = f"\n\n_更新时间：{now.strftime('%Y-%m-%d %H:%M:%S')}_"
             if update_info:
-                base_footer += f"\n_TrendRadar 发现新版本 *{update_info['remote_version']}*，当前 *{update_info['current_version']}_"
+                base_footer += f"\n_GEINEWS 发现新版本 *{update_info['remote_version']}*，当前 *{update_info['current_version']}_"
 
     # 根据 display_mode 选择统计标题
     stats_title = "热点词汇统计" if display_mode == "keyword" else "热点新闻统计"
@@ -504,7 +478,7 @@ def split_content_into_batches(
 
                 first_news_line = f"  1. {formatted_title}\n"
                 if len(stat["titles"]) > 1:
-                    first_news_line += "\n"
+                    first_news_line += _news_item_separator()
 
             # 原子性检查：词组标题+第一条新闻必须一起处理
             word_with_first_news = word_header + first_news_line
@@ -559,7 +533,7 @@ def split_content_into_batches(
 
                 news_line = f"  {j + 1}. {formatted_title}\n"
                 if j < len(stat["titles"]) - 1:
-                    news_line += "\n"
+                    news_line += _news_item_separator()
 
                 test_content = current_batch + news_line
                 if (
@@ -703,6 +677,8 @@ def split_content_into_batches(
                     formatted_title = f"{title_data_copy['title']}"
 
                 first_news_line = f"  1. {formatted_title}\n"
+                if len(source_data["titles"]) > 1:
+                    first_news_line += _news_item_separator()
 
             # 原子性检查：来源标题+第一条新闻
             source_with_first_news = source_header + first_news_line
@@ -755,6 +731,8 @@ def split_content_into_batches(
                     formatted_title = f"{title_data_copy['title']}"
 
                 news_line = f"  {j + 1}. {formatted_title}\n"
+                if j < len(source_data["titles"]) - 1:
+                    news_line += _news_item_separator()
 
                 test_content = current_batch + news_line
                 if (

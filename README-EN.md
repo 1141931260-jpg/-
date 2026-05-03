@@ -1,6 +1,6 @@
-# Trending Aggregation and Notification Tool
+# GEINEWS
 
-A locally maintained project for collecting, filtering, analyzing, and pushing trending news and RSS content.
+A locally maintained project for collecting, filtering, analyzing, and pushing trending news and RSS content with concise multi-channel notifications.
 
 ## Features
 
