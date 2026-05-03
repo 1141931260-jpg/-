@@ -96,8 +96,7 @@ def strip_markdown(text: str) -> str:
     # 去除标题符号 # ## ### 等
     text = re.sub(r'^#+\s*', '', text, flags=re.MULTILINE)
 
-    # 去除水平分割线 --- 或 ***
-    text = re.sub(r'^[\-\*]{3,}\s*$', '', text, flags=re.MULTILINE)
+    # 保留水平分割线，个人微信 text 模式需要它分隔新闻条目。
 
     # 去除 HTML 标签 <font color='xxx'>text</font> -> text
     text = re.sub(r'<font[^>]*>(.+?)</font>', r'\1', text)
