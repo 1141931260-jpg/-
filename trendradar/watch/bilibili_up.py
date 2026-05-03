@@ -307,7 +307,7 @@ def extract_wechat_url(description: str) -> Optional[str]:
 
 
 # ──────────────────────────────────────────────
-# 评论区置顶
+# 评论区内容
 # ──────────────────────────────────────────────
 
 def get_pinned_comment(bv_id: str, uid: Optional[int] = None, retries: int = 2) -> Optional[str]:
@@ -316,7 +316,8 @@ def get_pinned_comment(bv_id: str, uid: Optional[int] = None, retries: int = 2) 
 
     某些UP主（如"一觉醒来发生啥"）会把视频内容总结放在评论区回复中，
     且由于B站单条评论798字符限制，UP主会通过子评论"续楼"发布剩余内容。
-    本函数会自动获取主评论和所有UP主子评论并拼接为完整文本。
+    本函数会自动扫描置顶和前几页普通评论，优先返回可解析为编号新闻列表的
+    UP主评论，并拼接所有UP主子评论为完整文本。
 
     Args:
         bv_id: 视频 BV 号
@@ -327,7 +328,7 @@ def get_pinned_comment(bv_id: str, uid: Optional[int] = None, retries: int = 2) 
         UP主回复文本（含续楼），无则返回 None
     """
     import asyncio
-    from bilibili_api import video as bili_video, comment as bili_comment
+    from bilibili_api import video as bili_video
 
     async def _do_get():
         v = bili_video.Video(bvid=bv_id)
@@ -354,83 +355,35 @@ def get_pinned_comment(bv_id: str, uid: Optional[int] = None, retries: int = 2) 
 
     # 使用HTTP API获取评论（更可靠）
     url = "https://api.bilibili.com/x/v2/reply"
-    params = {"oid": aid, "type": 1, "sort": 2, "pn": 1, "ps": 20}
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
         "Referer": f"https://www.bilibili.com/video/{bv_id}",
     }
 
-    main_msg = None
-    main_rpid = None
+    def _numbered_item_count(text: str) -> int:
+        return sum(1 for line in text.splitlines() if re.match(r'^\s*\d{1,3}[、.．]\s*.+', line))
 
-    for attempt in range(retries + 1):
-        try:
-            resp = requests.get(url, params=params, headers=headers, timeout=15)
-            data = resp.json()
+    def _join_up_sub_comments(main_msg: str, main_rpid: Any) -> str:
+        if not main_msg or not main_rpid:
+            return main_msg
+
+        sub_url = "https://api.bilibili.com/x/v2/reply/reply"
+        up_subs = []
+        for pn in range(1, 10):
+            params = {"oid": aid, "type": 1, "root": main_rpid, "pn": pn, "ps": 20}
+            try:
+                resp = requests.get(sub_url, params=params, headers=headers, timeout=15)
+                data = resp.json()
+            except Exception:
+                break
             if data.get("code") != 0:
-                if attempt < retries:
-                    time.sleep(2)
-                    continue
-                return None
+                break
 
-            reply_data = data.get("data", {})
+            replies = data.get("data", {}).get("replies") or []
+            if not replies:
+                break
 
-            # 检查置顶评论
-            upper = reply_data.get("upper", {})
-            top = upper.get("top")
-            if top:
-                msg = top.get("content", {}).get("message", "")
-                if msg and len(msg) > 50:
-                    main_msg = msg
-                    main_rpid = top.get("rpid")
-
-            # 检查普通回复中的UP主回复
-            if not main_msg:
-                replies = reply_data.get("replies") or []
-                for r in replies[:5]:
-                    mid = r.get("member", {}).get("mid", "")
-                    msg = r.get("content", {}).get("message", "")
-                    if uid and str(mid) == str(uid) and msg and len(msg) > 50:
-                        main_msg = msg
-                        main_rpid = r.get("rpid")
-                        break
-                    elif not uid and msg and len(msg) > 100:
-                        main_msg = msg
-                        main_rpid = r.get("rpid")
-                        break
-
-            break
-        except Exception:
-            if attempt < retries:
-                time.sleep(2)
-                continue
-
-    if not main_msg or not main_rpid:
-        return main_msg
-
-    # 获取UP主子评论（续楼），拼接完整内容
-    # B站单条评论限798字符，UP主通过子评论续楼发布剩余内容
-    try:
-        async def _get_sub_comments():
-            c = bili_comment.Comment(
-                oid=aid,
-                type_=bili_comment.CommentResourceType.VIDEO,
-                rpid=main_rpid,
-            )
-            all_sub = []
-            for pn in range(1, 10):
-                result = await c.get_sub_comments(page_index=pn)
-                replies = result.get("replies") or []
-                if not replies:
-                    break
-                all_sub.extend(replies)
-            return all_sub
-
-        sub_replies = asyncio.run(_get_sub_comments())
-        if sub_replies:
-            # 收集UP主的子评论，按rpid排序保证顺序
-            up_subs = []
-            for sr in sub_replies:
+            for sr in replies:
                 sr_mid = sr.get("member", {}).get("mid", 0)
                 sr_msg = sr.get("content", {}).get("message", "")
                 if uid and str(sr_mid) == str(uid) and sr_msg:
@@ -438,27 +391,83 @@ def get_pinned_comment(bv_id: str, uid: Optional[int] = None, retries: int = 2) 
                 elif not uid and sr_msg and len(sr_msg) > 50:
                     up_subs.append(sr)
 
-            if up_subs:
-                up_subs.sort(key=lambda x: x.get("rpid", 0))
-                parts = [main_msg]
-                for sr in up_subs:
-                    sub_msg = sr["content"]["message"]
-                    # 处理续楼截断：主评论在798字符处被截断，
-                    # 子评论开头可能重复截断处的标点
-                    if parts and sub_msg:
-                        last_part = parts[-1]
-                        # 如果上一段以标点结尾（被截断），子评论以相同标点开头，去掉重复
-                        if last_part.endswith(("、", "，", "。", "；")) and sub_msg[0] == last_part[-1]:
-                            sub_msg = sub_msg[1:]
-                        # 直接拼接（不换行），因为是同一句话被截断
-                        parts[-1] = last_part + sub_msg
-                        continue
-                    parts.append(sub_msg)
-                return "\n".join(parts)
-    except Exception:
-        pass
+        if not up_subs:
+            return main_msg
 
-    return main_msg
+        up_subs.sort(key=lambda x: x.get("rpid", 0))
+        parts = [main_msg]
+        for sr in up_subs:
+            sub_msg = sr["content"]["message"]
+            if parts and sub_msg:
+                last_part = parts[-1]
+                if last_part.endswith(("、", "，", "。", "；")) and sub_msg[0] == last_part[-1]:
+                    sub_msg = sub_msg[1:]
+                parts[-1] = last_part + sub_msg
+                continue
+            parts.append(sub_msg)
+        return "\n".join(parts)
+
+    fallback_text = None
+    best_text = None
+    best_count = 0
+
+    for pn in range(1, 6):
+        params = {"oid": aid, "type": 1, "sort": 2, "pn": pn, "ps": 20}
+        reply_data = None
+        for attempt in range(retries + 1):
+            try:
+                resp = requests.get(url, params=params, headers=headers, timeout=15)
+                data = resp.json()
+                if data.get("code") != 0:
+                    if attempt < retries:
+                        time.sleep(2)
+                        continue
+                    return best_text or fallback_text
+                reply_data = data.get("data", {})
+                break
+            except Exception:
+                if attempt < retries:
+                    time.sleep(2)
+                    continue
+
+        if not reply_data:
+            continue
+
+        candidates = []
+        if pn == 1:
+            upper = reply_data.get("upper", {})
+            top = upper.get("top")
+            if top:
+                candidates.append(top)
+
+        candidates.extend(reply_data.get("replies") or [])
+        if not candidates:
+            break
+
+        for reply in candidates:
+            mid = reply.get("member", {}).get("mid", "")
+            msg = reply.get("content", {}).get("message", "")
+            rpid = reply.get("rpid")
+            if not msg:
+                continue
+            if uid and str(mid) != str(uid):
+                continue
+            if not uid and len(msg) <= 50:
+                continue
+
+            full_text = _join_up_sub_comments(msg, rpid)
+            if fallback_text is None and len(full_text) > 50:
+                fallback_text = full_text
+
+            count = _numbered_item_count(full_text)
+            if count > best_count:
+                best_count = count
+                best_text = full_text
+
+    if best_text:
+        return best_text
+
+    return fallback_text
 
 
 # ──────────────────────────────────────────────
