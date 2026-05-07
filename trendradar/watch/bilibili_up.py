@@ -23,6 +23,19 @@ from typing import Any, Dict, List, Optional
 import requests
 
 
+def _bilibili_headers(referer: str = "https://www.bilibili.com") -> Dict[str, str]:
+    """Headers that work better with Bilibili's public web APIs."""
+    return {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/124.0.0.0 Safari/537.36"
+        ),
+        "Referer": referer,
+        "Accept": "application/json, text/plain, */*",
+    }
+
+
 # ──────────────────────────────────────────────
 # B站视频搜索
 # ──────────────────────────────────────────────
@@ -330,6 +343,21 @@ def get_pinned_comment(bv_id: str, uid: Optional[int] = None, retries: int = 2) 
     import asyncio
     from bilibili_api import video as bili_video
 
+    headers = _bilibili_headers(f"https://www.bilibili.com/video/{bv_id}")
+
+    def _get_aid_http() -> Optional[int]:
+        resp = requests.get(
+            "https://api.bilibili.com/x/web-interface/view",
+            params={"bvid": bv_id},
+            headers=headers,
+            timeout=15,
+        )
+        data = resp.json()
+        if data.get("code") != 0:
+            return None
+        aid_value = data.get("data", {}).get("aid")
+        return int(aid_value) if aid_value else None
+
     async def _do_get():
         v = bili_video.Video(bvid=bv_id)
         info = await v.get_info()
@@ -340,7 +368,14 @@ def get_pinned_comment(bv_id: str, uid: Optional[int] = None, retries: int = 2) 
 
     # 获取 AID
     aid = None
+    try:
+        aid = _get_aid_http()
+    except Exception:
+        aid = None
+
     for attempt in range(retries + 1):
+        if aid:
+            break
         try:
             aid = asyncio.run(_do_get())
             if aid:
@@ -355,13 +390,12 @@ def get_pinned_comment(bv_id: str, uid: Optional[int] = None, retries: int = 2) 
 
     # 使用HTTP API获取评论（更可靠）
     url = "https://api.bilibili.com/x/v2/reply"
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        "Referer": f"https://www.bilibili.com/video/{bv_id}",
-    }
 
     def _numbered_item_count(text: str) -> int:
-        return sum(1 for line in text.splitlines() if re.match(r'^\s*\d{1,3}[、.．]\s*.+', line))
+        # B站评论在 API 返回时不一定保留换行，编号可能连续出现在同一行：
+        # "1、xxx 2、xxx 3、xxx"。这里按“编号标记”计数，而不是按行计数。
+        marker_pattern = re.compile(r'(^|[\r\n\s，,。；;])\d{1,3}\s*(?:[、)]|[.．](?!\d))\s*')
+        return len(marker_pattern.findall(text or ""))
 
     def _join_up_sub_comments(main_msg: str, main_rpid: Any) -> str:
         if not main_msg or not main_rpid:
@@ -394,22 +428,75 @@ def get_pinned_comment(bv_id: str, uid: Optional[int] = None, retries: int = 2) 
         if not up_subs:
             return main_msg
 
-        up_subs.sort(key=lambda x: x.get("rpid", 0))
+        up_subs.sort(key=lambda x: x.get("ctime", x.get("rpid", 0)))
         parts = [main_msg]
         for sr in up_subs:
             sub_msg = sr["content"]["message"]
-            if parts and sub_msg:
-                last_part = parts[-1]
-                if last_part.endswith(("、", "，", "。", "；")) and sub_msg[0] == last_part[-1]:
-                    sub_msg = sub_msg[1:]
-                parts[-1] = last_part + sub_msg
-                continue
-            parts.append(sub_msg)
+            if sub_msg:
+                parts.append(sub_msg)
         return "\n".join(parts)
+
+    def _candidate_replies(reply_data: Dict[str, Any]) -> List[Dict[str, Any]]:
+        candidates: List[Dict[str, Any]] = []
+        top = reply_data.get("top")
+        if isinstance(top, dict):
+            candidates.extend(x for x in top.values() if isinstance(x, dict))
+
+        upper = reply_data.get("upper", {})
+        if isinstance(upper, dict):
+            upper_top = upper.get("top")
+            if isinstance(upper_top, dict):
+                candidates.append(upper_top)
+
+        top_replies = reply_data.get("top_replies") or []
+        if isinstance(top_replies, list):
+            candidates.extend(x for x in top_replies if isinstance(x, dict))
+
+        replies = reply_data.get("replies") or []
+        if isinstance(replies, list):
+            candidates.extend(x for x in replies if isinstance(x, dict))
+
+        seen = set()
+        unique = []
+        for reply in candidates:
+            rpid = reply.get("rpid")
+            key = rpid or id(reply)
+            if key in seen:
+                continue
+            seen.add(key)
+            unique.append(reply)
+        return unique
 
     fallback_text = None
     best_text = None
     best_count = 0
+    seen_rpids = set()
+
+    def _consider_reply(reply: Dict[str, Any]) -> None:
+        nonlocal fallback_text, best_text, best_count
+
+        mid = reply.get("member", {}).get("mid", "")
+        msg = reply.get("content", {}).get("message", "")
+        rpid = reply.get("rpid")
+        if not msg:
+            return
+        if uid and str(mid) != str(uid):
+            return
+        if not uid and len(msg) <= 50:
+            return
+        if rpid and rpid in seen_rpids:
+            return
+        if rpid:
+            seen_rpids.add(rpid)
+
+        full_text = _join_up_sub_comments(msg, rpid)
+        if fallback_text is None and len(full_text) > 50:
+            fallback_text = full_text
+
+        count = _numbered_item_count(full_text)
+        if count > best_count:
+            best_count = count
+            best_text = full_text
 
     for pn in range(1, 6):
         params = {"oid": aid, "type": 1, "sort": 2, "pn": pn, "ps": 20}
@@ -433,36 +520,50 @@ def get_pinned_comment(bv_id: str, uid: Optional[int] = None, retries: int = 2) 
         if not reply_data:
             continue
 
-        candidates = []
-        if pn == 1:
-            upper = reply_data.get("upper", {})
-            top = upper.get("top")
-            if top:
-                candidates.append(top)
-
-        candidates.extend(reply_data.get("replies") or [])
+        candidates = _candidate_replies(reply_data)
         if not candidates:
             break
 
         for reply in candidates:
-            mid = reply.get("member", {}).get("mid", "")
-            msg = reply.get("content", {}).get("message", "")
-            rpid = reply.get("rpid")
-            if not msg:
-                continue
-            if uid and str(mid) != str(uid):
-                continue
-            if not uid and len(msg) <= 50:
-                continue
+            _consider_reply(reply)
 
-            full_text = _join_up_sub_comments(msg, rpid)
-            if fallback_text is None and len(full_text) > 50:
-                fallback_text = full_text
+    # 新版评论区经常只在游标接口里返回 UP 主长评，旧 pn 接口可能只给少量热门评论。
+    main_url = "https://api.bilibili.com/x/v2/reply/main"
+    for mode in (3, 2):
+        cursor_next = 0
+        for _ in range(6):
+            params = {"oid": aid, "type": 1, "mode": mode, "next": cursor_next, "ps": 20}
+            reply_data = None
+            for attempt in range(retries + 1):
+                try:
+                    resp = requests.get(main_url, params=params, headers=headers, timeout=15)
+                    data = resp.json()
+                    if data.get("code") != 0:
+                        if attempt < retries:
+                            time.sleep(2)
+                            continue
+                        reply_data = None
+                    else:
+                        reply_data = data.get("data", {})
+                    break
+                except Exception:
+                    if attempt < retries:
+                        time.sleep(2)
+                        continue
 
-            count = _numbered_item_count(full_text)
-            if count > best_count:
-                best_count = count
-                best_text = full_text
+            if not reply_data:
+                break
+
+            for reply in _candidate_replies(reply_data):
+                _consider_reply(reply)
+
+            cursor = reply_data.get("cursor", {}) or {}
+            if cursor.get("is_end"):
+                break
+            next_cursor = cursor.get("next")
+            if next_cursor in (None, cursor_next):
+                break
+            cursor_next = next_cursor
 
     if best_text:
         return best_text
@@ -608,28 +709,46 @@ def parse_numbered_list(text: str, bv_id: str = "") -> List[Dict[str, Any]]:
         2、xxx
         3、xxx
 
+    B站评论 API 返回时有时会丢失/压缩换行，变成：
+        2026年5月2日信息差，1、xxx 2、xxx 3、xxx
+
+    因此这里不再按“每行一个编号”解析，而是按全文里的编号边界切分。
+
     Returns:
         [{"heading": "...", "summary": "", "links": [], "bv": ...}]
     """
     sections: List[Dict[str, Any]] = []
-    # 匹配 "数字、" 或 "数字." 或 "数字、" 开头的行
-    num_pattern = re.compile(r'^\d{1,3}[、.．]\s*(.+)')
+    if not text:
+        return sections
 
-    for line in text.split("\n"):
-        line = line.strip()
-        if not line:
+    # 支持：
+    # 1、内容 / 1. 内容 / 1．内容 / 1) 内容。
+    # 不把逗号当编号标记，避免把日期和时间（如 17:00，）误切成条目。
+    # 用 (?<!\\d) 避免匹配 2026、520 这类数字中间。
+    marker_pattern = re.compile(r'(^|[\r\n\s，,。；;])(\d{1,3})\s*(?:[、)]|[.．](?!\d))\s*')
+    matches = list(marker_pattern.finditer(text))
+    if not matches:
+        return sections
+
+    for index, match in enumerate(matches):
+        start = match.end()
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
+        heading = text[start:end].strip()
+
+        # 清理评论里的换行、引用符和多余空白，避免推送里出现断裂文本。
+        heading = re.sub(r'[\r\n]+', ' ', heading)
+        heading = re.sub(r'\s+', ' ', heading).strip(" \t:：;；,，。")
+
+        if not heading:
             continue
-        m = num_pattern.match(line)
-        if m:
-            heading = m.group(1).strip()
-            if heading:
-                sections.append({
-                    "heading": heading,
-                    "summary": "",
-                    "links": [],
-                    "bv": bv_id,
-                    "wx_url": "",
-                })
+
+        sections.append({
+            "heading": heading,
+            "summary": "",
+            "links": [],
+            "bv": bv_id,
+            "wx_url": "",
+        })
 
     return sections
 
@@ -684,8 +803,10 @@ def collect_bilibili_up_content(
             filtered = videos[:1]  # 回退到第一个
         videos = filtered
 
-    # 3. 逐个处理
-    for video in videos[:max_items]:
+    # 3. 逐个处理。评论区模式下，最新视频可能尚未发布长评，允许继续看后续候选。
+    fallback_items: List[Dict[str, Any]] = []
+    videos_to_process = videos if use_pinned_comment else videos[:max_items]
+    for video in videos_to_process:
         bv_id = video["bv"]
         try:
             info = get_video_info(bv_id, timeout=timeout)
@@ -711,11 +832,13 @@ def collect_bilibili_up_content(
 
             # 解析段落：优先用评论区置顶 > 文章全文 > 视频描述时间戳
             sections = []
+            parsed_from_pinned_comment = False
             if pinned_text and not _is_captcha_page(pinned_text):
                 sections = parse_article_sections(pinned_text, bv_id, wx_url or "")
                 # 评论区内容通常是编号列表格式，不是markdown标题
                 if not sections:
                     sections = parse_numbered_list(pinned_text, bv_id)
+                parsed_from_pinned_comment = bool(sections)
             if not sections and article_text and not _is_captcha_page(article_text):
                 sections = parse_article_sections(article_text, bv_id, wx_url or "")
 
@@ -733,7 +856,7 @@ def collect_bilibili_up_content(
                     "wx_url": wx_url or "",
                 }]
 
-            items.append({
+            item_result = {
                 "title": title,
                 "bv_id": bv_id,
                 "video_url": f"https://www.bilibili.com/video/{bv_id}",
@@ -741,8 +864,19 @@ def collect_bilibili_up_content(
                 "upload_date": info.get("upload_date", ""),
                 "sections": sections,
                 "section_count": len(sections),
-            })
+            }
+
+            if use_pinned_comment and not parsed_from_pinned_comment:
+                fallback_items.append(item_result)
+                continue
+
+            items.append(item_result)
+            if len(items) >= max_items:
+                break
         except Exception as e:
             errors.append(f"处理 {bv_id} 失败: {e}")
+
+    if not items and fallback_items:
+        items.extend(fallback_items[:max_items])
 
     return {"items": items, "errors": errors}
